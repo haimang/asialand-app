@@ -1,0 +1,223 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		
+		{
+			"path": "pages/home/home",
+			"style": {
+				"app-plus":{
+					"titleNView":false
+				},
+				"enablePullDownRefresh": true
+			}
+		},{
+		    "path": "pages/login/login",
+		    "style": {
+		    	"navigationBarTitleText": ""
+		    }
+		},
+		{
+		    "path": "pages/register/success",
+		    "style": {
+		    	"app-plus":{"titleNView":false}		
+		    }
+		},
+		{
+		    "path": "pages/unit/reserve_success",
+		    "style": {
+		    	"navigationBarTitleText": ""
+		    }
+		},
+		{
+		    "path": "pages/unit/reserve",
+		    "style": {
+		    	"navigationBarTitleText": ""
+		    }
+		},
+		{
+		    "path": "pages/unit/detail",
+		    "style": {
+		    	"navigationBarTitleText": ""
+		    }
+		},
+		{
+		    "path": "pages/unit/index",
+		    "style": {
+		    	"navigationBarTitleText": ""
+		    }
+		},
+		{
+		    "path": "pages/agent/index",
+		    "style": {
+		    	"navigationBarTitleText": ""     	   	        
+		    }
+		},
+		{
+		    "path": "pages/user/reservations",
+		    "style": {
+		    	"navigationBarTitleText": "" 	        
+		    }
+		},
+		{
+		    "path": "pages/user/properties",
+		    "style": {
+		    	"navigationBarTitleText": "" 	 	        
+		    }
+		},
+		{
+		    "path": "pages/user/privacy",
+		    "style": {
+		    	"navigationBarTitleText": "" 	 	        
+		    }
+		},
+		{
+		    "path": "pages/user/info",
+		    "style": {
+		    	"navigationBarTitleText": "" 	        
+		    }
+		},
+		{
+		    "path": "pages/user/index",
+		    "style": {
+		    	"app-plus":{"titleNView":false}		        
+		    }
+		},
+		{
+		    "path": "pages/notification/detail",
+		    "style": {
+				"navigationBarTitleText": ""     	        
+		    }
+		},
+		{
+		    "path": "pages/notification/index",
+		    "style": {
+				"app-plus":{"titleNView":false},
+				"enablePullDownRefresh": true
+		    }
+		},
+		{
+		    "path": "pages/promotion/index",
+		    "style": {
+				"app-plus":{"titleNView":false}		        
+		    }
+		},
+		{
+		    "path": "pages/promotion/detail",
+		    "style": {
+				"navigationBarTitleText": ""
+		    }
+		},
+		{
+		    "path": "pages/register/register_step1",
+		    "style": {
+				"navigationBarTitleText": ""	        
+		    }
+		},
+		{
+		    "path": "pages/map/search_map",
+			"style": {
+				"navigationBarTitleText": ""     	   	 
+			}
+		},
+		{
+		    "path": "pages/search/result",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+		    "path": "pages/search/search",
+			"style": {
+				"navigationBarTitleText": ""     
+			}
+		},
+		{
+		    "path": "pages/map/map",
+		    "style": {
+		    	"navigationBarTitleText": ""     
+		    }
+		},
+		{
+		    "path": "pages/house/analysis",
+		    "style": {
+		    	"navigationBarTitleText": ""     
+		    }
+		},
+		{
+		    "path": "pages/house/detail",
+		    "style": {
+		    	"navigationBarTitleText": ""     
+		    }
+		},
+		{
+		    "path": "pages/news/detail",
+		    "style": {
+		    	"navigationBarTitleText": ""     
+		    }
+		},
+		{
+			"path": "pages/register/register_step3",
+			"style": {
+				"navigationBarTitleText": ""     		        
+			}
+		},
+		{
+			"path": "pages/register/register_step2",
+			"style": {
+				"navigationBarTitleText": "" 		        
+			}
+		},
+		{
+			"path": "pages/user/contactus",
+			"style": {
+				"navigationBarTitleText": "" 		        
+			}
+		},{
+		    "path": "pages/main/main",
+		    "style": {
+		        "navigationBarTitleText": "登录模板"
+		    }
+		},{
+            "path": "pages/user/user",
+            "style": {
+                "navigationBarTitleText": "我的"
+            }
+        },{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		}
+	],
+	"tabBar": {
+	    "color": "#7a7e83",
+	    "selectedColor": "#D9C077",
+	    "backgroundColor": "#ffffff",
+	    "list": [{
+	        "pagePath": "pages/home/home",
+	        "text": "Search",
+	        "iconPath": "static/img/tab1-icon.png",
+	        "selectedIconPath": "static/img/tab1-icon-selected.png"
+	    }, {
+	        "pagePath": "pages/promotion/index",
+	        "text": "Promotions",
+	        "iconPath": "static/img/stLine-gift-l.png",
+	        "selectedIconPath": "static/img/stLine-gift-l-selected.png"
+	    }, {
+	        "pagePath": "pages/notification/index",
+	        "text": "Notifications",
+	        "iconPath": "static/img/fa-comment-dots.png",
+	        "selectedIconPath": "static/img/fa-comment-dots-selected.png"
+	    }, {
+	        "pagePath": "pages/user/index",
+	        "text": "Member",
+	        "iconPath": "static/img/antOutline-user.png",
+	        "selectedIconPath": "static/img/antOutline-user-selected.png"
+	    }]
+	},
+	"globalStyle": {
+	    "navigationBarTextStyle": "black",
+	    "navigationBarBackgroundColor": "#f8f8f8",
+	    "backgroundColor": "#f8f8f8"
+	}
+}

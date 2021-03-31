@@ -1,0 +1,129 @@
+{
+    "name" : "Asialand",
+    "appid" : "__UNI__862D5C0",
+    "description" : "",
+    "versionName" : "1.0.7",
+    "versionCode" : 107,
+    "transformPx" : false,
+    /* 5+App特有相关 */
+    "app-plus" : {
+        "usingComponents" : true,
+        "nvueCompiler" : "uni-app",
+        "compilerVersion" : 3,
+        "compatible" : {
+            "ignoreVersion" : true
+        },
+        "splashscreen" : {
+            "alwaysShowBeforeRender" : true,
+            "waiting" : true,
+            "autoclose" : true,
+            "delay" : 0
+        },
+        /* 模块配置 */
+        "modules" : {
+            "VideoPlayer" : {},
+            "SQLite" : {},
+            "UIWebview" : {},
+            "Push" : {},
+            "Share" : {}
+        },
+        /* 应用发布信息 */
+        "distribute" : {
+            /* android打包配置 */
+            "android" : {
+                "permissions" : [
+                    "<uses-feature android:name=\"android.hardware.camera\"/>",
+                    "<uses-feature android:name=\"android.hardware.camera.autofocus\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CAMERA\"/>",
+                    "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
+                    "<uses-permission android:name=\"android.permission.INTERNET\"/>",
+                    "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
+                    "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>",
+                    "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
+                    "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
+                ],
+                "minSdkVersion" : "21",
+                "targetSdkVersion" : "29",
+                "abiFilters" : [ "armeabi-v7a", "arm64-v8a" ]
+            },
+            /* ios打包配置 */
+            "ios" : {
+                "privacyDescription" : {
+                    "NSPhotoLibraryUsageDescription" : "为了设置用户头像，需要相册权限",
+                    "NSPhotoLibraryAddUsageDescription" : "为了设置用户头像，需要相册权限",
+                    "NSCameraUsageDescription" : "为了设置用户头像，需要摄像头权限"
+                }
+            },
+            /* SDK配置 */
+            "sdkConfigs" : {
+                "maps" : {
+                    "baidu" : {
+                        "appkey_ios" : "",
+                        "appkey_android" : "123123123123123"
+                    }
+                },
+                "payment" : {
+                    "appleiap" : {}
+                },
+                "share" : {
+                    "weixin" : {
+                        "appid" : "wxb2a5804a19734b21",
+                        "UniversalLinks" : "https://portal.asialand.com.au"
+                    }
+                },
+                "speech" : {},
+                "ad" : {}
+            },
+            "splashscreen" : {
+                "androidStyle" : "default",
+                "android" : {
+                    "hdpi" : "static/img/splash.9.png",
+                    "xhdpi" : "static/img/splash_720.9.png",
+                    "xxhdpi" : "static/img/splash_1080.9.png"
+                },
+                "iosStyle" : "common"
+            },
+            "icons" : {
+                "android" : {
+                    "xxxhdpi" : "static/img/asialand-appicon-192.png",
+                    "xxhdpi" : "static/img/144.png",
+                    "xhdpi" : "static/img/96.png",
+                    "hdpi" : "static/img/72.png"
+                }
+            }
+        }
+    },
+    /* 快应用特有相关 */
+    "quickapp" : {},
+    /* 小程序特有相关 */
+    "mp-weixin" : {
+        "appid" : "",
+        "setting" : {
+            "urlCheck" : false
+        },
+        "usingComponents" : true
+    },
+    "mp-alipay" : {
+        "usingComponents" : true
+    },
+    "mp-baidu" : {
+        "usingComponents" : true
+    },
+    "mp-toutiao" : {
+        "usingComponents" : true
+    },
+    "uniStatistics" : {
+        "enable" : false
+    }
+}

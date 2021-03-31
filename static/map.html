@@ -1,0 +1,426 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=7; IE=EmulateIE9; IE=10" />
+	    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<meta name="keywords" content="setCenterAndZoom" />
+		<title>Map</title>
+		
+		<link rel="icon" href="http://here.com/favicon.ico"/>
+		<style>
+			.header{
+				width: 100%;
+				height: 55px;
+				background-color: rgba(0, 0, 0, 1);
+				box-shadow: 0px 5px 10px -5px rgba(170, 170, 170, 100);
+				position:fixed;
+				top:0px;
+				left:0;
+				z-index:10000;
+				padding:0px 10px;
+				box-sizing: border-box;
+			}
+			
+			.uni-tab-item{
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.uni-tab-item-title{
+				color: rgba(217, 192, 119, 100);
+				font-size: 12px;
+				text-align: left;
+				font-weight: bold;
+				font-family: PingFangSC-regular;
+			}
+			
+			.uni-tab-item-title-active{
+				font-weight: bold;
+			}
+			
+			.mark{
+				width: 6px;
+				height: 6px;
+				background-color: rgba(217, 192, 119, 100);
+				border-radius: 6px;
+				text-align: center;
+				margin-top:5px;
+			}
+			
+			.flex{
+				display:flex !important;
+			}
+			
+			.row {
+				flex-direction:row;
+			}
+			
+			.column{
+				flex-direction: column;
+			}
+			
+			.align-center{
+				align-items: center;
+			}
+			
+			.space-between{
+				justify-content: space-between;
+			}
+			
+			
+			body{
+				margin:0px;
+			}
+			
+			.loading-more {
+				display:flex;
+			    align-items: center;
+			    justify-content: center;
+			    padding-top: 10px;
+			    padding-bottom: 10px;
+			    text-align: center;
+				background: rgba(0,0,0,0.2);
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100vh;
+			}
+			
+			.loading-icon{
+				width: 40px;
+				height: 40px;
+				transition: .3s;
+				animation: loading 1s steps(12) infinite;
+			}
+				
+			@keyframes loading {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(1turn);
+				}
+			}
+			
+			.nm_bubble_content {
+				padding:1em;
+				font-size:1.3em;
+			}
+			
+			
+			.nm_bubble_content{
+				background-color: rgb(255,255,255);
+				color:rgb(0,0,0);
+				border-radius:10px;
+				border:0px;
+				box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.4);
+				font-size:12px;
+				font-weight:bold;
+			}
+			
+			.nm_bubble_tail{
+				display:none;
+			}
+			
+			.nm_bubble_controls{
+				display:none;
+			}
+			
+			.nm_bubble_bg{
+				background-color:transparent !important;
+			}
+		</style>
+	  <!--<link href="http://developer.here.com/html/css/main.css" rel="stylesheet" />-->
+	</head>
+	<body>
+		<div class="header flex row space-between align-center">
+		    <div id="school_tab" class="uni-tab-item flex column">
+		        <div id="school" class="uni-tab-item-title"></div>
+				<div id="school_mark" class="mark" style="visibility: hidden;"></div>
+		    </div>
+			<div id="shopping_tab" class="uni-tab-item flex column">
+			    <div id="shopping" class="uni-tab-item-title"></div>
+				<div id="shopping_mark" class="mark" style="visibility: hidden;"></div>
+			</div>
+			<div id="restaurant_tab" class="uni-tab-item flex column">
+			    <div id="restaurant" class="uni-tab-item-title"></div>
+				<div id="restaurant_mark" class="mark" style="visibility: hidden;"></div>
+			</div>
+			<div id="transport_tab" class="uni-tab-item flex column">
+			    <div id="transport" class="uni-tab-item-title"></div>
+				<div id="transport_mark" class="mark" style="visibility: hidden;"></div>
+			</div>
+			<div id="leisure_tab" class="uni-tab-item flex column">
+			    <div id="leisure" class="uni-tab-item-title"></div>
+				<div id="leisure_mark" class="mark" style="visibility: hidden;"></div>
+			</div>
+			<div id="hospital_tab" class="uni-tab-item flex column">
+			    <div id="hospital" class="uni-tab-item-title"></div>
+				<div id="hospital_mark" class="mark" style="visibility: hidden;"></div>
+			</div>
+		</div>
+		<div id="mapContainer" style="width:100vw; height:100vh;"></div>
+		<div class="loading-more" id="loadingView">
+			<img class="loading-icon" src="data:image/svg+xml;base64,IDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB3aWR0aD0nMTIwJyBoZWlnaHQ9JzEyMCcgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxwYXRoIGZpbGw9J25vbmUnIGQ9J00wIDBoMTAwdjEwMEgweicvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nI0U5RTlFOScgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwIC0zMCknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyM5ODk2OTcnIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoMzAgMTA1Ljk4IDY1KScvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nIzlCOTk5QScgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3JvdGF0ZSg2MCA3NS45OCA2NSknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyNBM0ExQTInIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoOTAgNjUgNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjQUJBOUFBJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKDEyMCA1OC42NiA2NSknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyNCMkIyQjInIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoMTUwIDU0LjAyIDY1KScvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nI0JBQjhCOScgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3JvdGF0ZSgxODAgNTAgNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjQzJDMEMxJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKC0xNTAgNDUuOTggNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjQ0JDQkNCJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKC0xMjAgNDEuMzQgNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjRDJEMkQyJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKC05MCAzNSA2NSknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyNEQURBREEnIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoLTYwIDI0LjAyIDY1KScvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nI0UyRTJFMicgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3JvdGF0ZSgtMzAgLTUuOTggNjUpJy8+PC9zdmc+"></img>    
+		</div>
+		<!-- <script type="text/javascript" src="libs/prettyprint.js"></script> -->
+	</body>
+	<!-- Set up constants such as APP ID and token -->
+	<script type="text/javascript" src="libs/hereAppIdAndToken.js"></script>
+	<!-- Bootstrap jQuery Library -->
+	
+		
+	<script type="text/javascript" src="libs/jQl.min.js"></script>
+	<!-- Asynchronously the HERE Maps API for JavaScript -->
+	
+	<script type="text/javascript" src="libs/hereAsyncLoader.js"
+			id="HereMapsLoaderScript"
+			data-map-container="mapContainer"
+			data-params="maps"
+			data-callback="setCenterAndZoom" >
+	</script>
+</html>
+<script>
+	var markArray = []
+	var markers = []
+	var heremap,infobubbles,container
+	
+	function addMarkerToMap() {
+		container = new nokia.maps.map.Container();
+		
+		for (var i=0;i< markArray.length;i++){
+
+			var lat = parseFloat(markArray[i].location.split(",")[0])
+			var lng = parseFloat(markArray[i].location.split(",")[1])				
+			var coord = new nokia.maps.geo.Coordinate(lat,lng)
+			
+			var anchorPoint = new nokia.maps.util.Point(0-((markArray[i].name.length * 12 + 20) / 4),-60);
+			
+			var standardMarker = new nokia.maps.map.Marker(coord,  {
+				title : markArray[i].name,
+				icon: markArray[i].icon,
+				anchor: anchorPoint,
+				html: '<div>' + markArray[i].name + '</div>'
+			});
+			//heremap.objects.add(standardMarker);
+			container.objects.add(standardMarker);
+		}
+		
+		var TOUCH = nokia.maps.dom.Page.browser.touch,
+		  CLICK = TOUCH ? 'tap' : 'click';
+		container.addListener(CLICK, function (evt) {
+		  infoBubbles.openBubble(evt.target.html, evt.target.coordinate);
+		}, false);
+		heremap.objects.add(container);
+		$("#loadingView").fadeOut()
+	}
+	
+	 function changeTab(index) {
+		heremap.objects.clear()
+		markArray = []
+		if(index == 0){ //school 
+			for(var i = 0; i < nearByInfo.primarySchool.length; i++) {
+				nearByInfo.primarySchool[i].icon = "img/icon_school.png"
+				markArray.push(nearByInfo.primarySchool[i])
+			}
+			
+			for(var i = 0; i < nearByInfo.highSchool.length; i++) {
+				nearByInfo.highSchool[i].icon = "img/icon_school.png"
+				markArray.push(nearByInfo.highSchool[i])
+			}
+			
+			for(var i = 0; i < nearByInfo.university.length; i++) {
+				nearByInfo.university[i].icon = "img/icon_school.png"
+				markArray.push(nearByInfo.university[i])
+			}					
+		}
+		else if(index == 1) { //shopping
+			for(var i = 0; i < nearByInfo.shopping.length; i++) {
+				nearByInfo.shopping[i].icon = "img/icon_shopping.png"
+				markArray.push(nearByInfo.shopping[i])
+			}
+		}
+		else if(index == 2) { //restaurant
+			for(var i = 0; i < nearByInfo.restaurant.length; i++) {
+				nearByInfo.restaurant[i].icon = "img/icon_restaurant.png"
+				markArray.push(nearByInfo.restaurant[i])
+			}
+		}
+		else if(index == 3) { //transport
+			for(var i = 0; i < nearByInfo.transport.length; i++) {
+				nearByInfo.transport[i].icon = "img/icon_transport.png"
+				markArray.push(nearByInfo.transport[i])
+			}
+		}
+		else if(index == 4) { //leisure
+			for(var i = 0; i < nearByInfo.leisure.length; i++) {
+				nearByInfo.leisure[i].icon = "img/icon_leisure.png"
+				markArray.push(nearByInfo.leisure[i])
+			}
+		}
+		else if(index == 5) { //hospital
+			for(var i = 0; i < nearByInfo.hospital.length; i++) {
+				nearByInfo.hospital[i].icon = "img/icon_hospital.png"
+				markArray.push(nearByInfo.hospital[i])
+			}
+		}
+		
+		addMarkerToMap()
+	}
+	
+	function setCenterAndZoom(map) {
+		if(getQuery('language') == "en") {
+			$("#school").html("School")
+			$("#shopping").html("Shopping")
+			$("#restaurant").html("Restaurant")
+			$("#transport").html("Transport")
+			$("#leisure").html("Leisure")
+			$("#hospital").html("Hospital")			
+		}
+		else{
+			$("#school").html("学院")
+			$("#shopping").html("购物")
+			$("#restaurant").html("餐饮")
+			$("#transport").html("交通")
+			$("#leisure").html("休闲")
+			$("#hospital").html("医院")
+		}
+		
+		$("#school_mark").css('visibility','hidden');
+		$("#shopping_mark").css('visibility','hidden');
+		$("#restaurant_mark").css('visibility','hidden');
+		$("#transport_mark").css('visibility','hidden');
+		$("#leisure_mark").css('visibility','hidden');
+		$("#hospital_mark").css('visibility','hidden');
+		
+		$("#school_tab").on("click", function(){
+			print("school tab")
+			$("#school_mark").css('visibility','visible');
+			$("#shopping_mark").css('visibility','hidden');
+			$("#restaurant_mark").css('visibility','hidden');
+			$("#transport_mark").css('visibility','hidden');
+			$("#leisure_mark").css('visibility','hidden');
+			$("#hospital_mark").css('visibility','hidden');
+			changeTab(0)
+		});
+		
+		$("#shopping_tab").on("click", function(){
+			$("#school_mark").css('visibility','hidden');
+			$("#shopping_mark").css('visibility','visible');
+			$("#restaurant_mark").css('visibility','hidden');
+			$("#transport_mark").css('visibility','hidden');
+			$("#leisure_mark").css('visibility','hidden');
+			$("#hospital_mark").css('visibility','hidden');
+			changeTab(1)
+		});
+		
+		$("#restaurant_tab").on("click", function(){
+			$("#school_mark").css('visibility','hidden');
+			$("#shopping_mark").css('visibility','hidden');
+			$("#restaurant_mark").css('visibility','visible');
+			$("#transport_mark").css('visibility','hidden');
+			$("#leisure_mark").css('visibility','hidden');
+			$("#hospital_mark").css('visibility','hidden');
+			changeTab(2)
+		});
+		
+		$("#transport_tab").on("click", function(){
+			$("#school_mark").css('visibility','hidden');
+			$("#shopping_mark").css('visibility','hidden');
+			$("#restaurant_mark").css('visibility','hidden');
+			$("#transport_mark").css('visibility','visible');
+			$("#leisure_mark").css('visibility','hidden');
+			$("#hospital_mark").css('visibility','hidden');
+			changeTab(3)
+		});
+		
+		$("#leisure_tab").on("click", function(){
+			$("#school_mark").css('visibility','hidden');
+			$("#shopping_mark").css('visibility','hidden');
+			$("#restaurant_mark").css('visibility','hidden');
+			$("#transport_mark").css('visibility','hidden');
+			$("#leisure_mark").css('visibility','visible');
+			$("#hospital_mark").css('visibility','hidden');
+			changeTab(4)
+		});
+		
+		$("#hospital_tab").on("click", function(){
+			$("#school_mark").css('visibility','hidden');
+			$("#shopping_mark").css('visibility','hidden');
+			$("#restaurant_mark").css('visibility','hidden');
+			$("#transport_mark").css('visibility','hidden');
+			$("#leisure_mark").css('visibility','hidden');
+			$("#hospital_mark").css('visibility','visible');
+			changeTab(5)
+		});
+		
+		var pixelRatio = window.devicePixelRatio || 1;
+		console.log(pixelRatio)
+		map.set('pixelRatio', 4);
+		map.set('zoomLevel', 13);
+		map.set('center', [Number(getQuery('lat')), Number(getQuery('log'))]);
+		heremap = map
+		infoBubbles = new nokia.maps.map.component.InfoBubbles();
+		map.components.add(infoBubbles);
+		getDetailInfo( getQuery("token"),getQuery("hash"))		
+	}
+	
+	function getDetailInfo(token, hash){
+		$.ajax({
+			type: "get",
+			url: "https://dev.unifyestate.com/_api/properties/detail",
+			data: {
+			    token: token,
+				hash: hash
+			},
+			contentType: "application/json",  //推荐写这个
+			dataType: "json",
+			success: function(data){
+				$("#loadingView").fadeOut()
+				if(data.code == 0){
+					if(data.data.nearby != "") {
+						nearByInfo = JSON.parse(data.data.nearby)
+						console.log(nearByInfo)
+						$("#school_mark").css('visibility','visible');
+						changeTab(0)
+					}
+				}
+				console.log('ok');
+			},
+			error:function(){
+				$("#loadingView").fadeOut()
+				console.log('error');
+			}
+		})
+	}
+		
+	function getQuery(name) {
+		// 正则：[找寻'&' + 'url参数名字' = '值' + '&']（'&'可以不存在）
+		let reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+		let r = window.location.search.substr(1).match(reg);
+		if(r != null) {
+			// 对参数值进行解码
+			return decodeURIComponent(r[2]);
+		}
+		return null;
+	}
+	  
+	var userAgent = navigator.userAgent;
+	
+	// 待触发 `UniAppJSBridgeReady` 事件后，即可调用 uni 的 API。
+	// document.addEventListener('UniAppJSBridgeReady', function() {
+	// 	document.querySelector('.btn-list').addEventListener('click', function(evt) {
+	// 		var target = evt.target;
+	// 		uni.navigateBack({
+	// 		  delta: 1
+	// 		});
+	// 	});
+	// });
+	
+</script>
+<script type="text/javascript" src="jquery.min.js"></script>
+
+<script type="text/javascript" src="https://js.cdn.aliyun.dcloud.net.cn/dev/uni-app/uni.webview.1.5.2.js"></script>
