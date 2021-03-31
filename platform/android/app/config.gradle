@@ -1,0 +1,12 @@
+ext {
+    //个推APPID，APP_KEY，APP_SECRET 请填写您获取到的值
+    GETUI_APP_ID = "LRLZs4YCyi9dNfSji2TmIA"
+    GETUI_APP_KEY = "3o3UAjJHme9XnwAvFSRV57"
+    GETUI_APP_SECRET = "JP3ho07IlyA0lWcxT5OdN"
+
+    //注意：该 MASTERSECRET 仅用于测试推送功能使用，对外发布请勿配置该值，避免泄漏您的 MASTERSECRET 的值。
+    MASTERSECRET = "RsmNfebHTn6NAb5tqNsgk1"
+
+    //server url
+    SERVER_URL = "https://restapi.getui.com/"
+}

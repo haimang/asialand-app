@@ -1,0 +1,402 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=7; IE=EmulateIE9; IE=10" />
+	    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<meta name="keywords" content="setCenterAndZoom" />
+		<title>Map</title>
+		
+		<link rel="icon" href="http://here.com/favicon.ico"/>
+		<style>
+			.header{
+				width: 100%;
+				height: 55px;
+				background-color: rgba(0, 0, 0, 1);
+				box-shadow: 0px 5px 10px -5px rgba(170, 170, 170, 100);
+				position:fixed;
+				top:0px;
+				left:0;
+				z-index:10000;
+				padding:0px 10px;
+				box-sizing: border-box;
+			}
+			
+			.uni-tab-item{
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.uni-tab-item-title{
+				color: rgba(217, 192, 119, 100);
+				font-size: 12px;
+				text-align: left;
+				font-weight: bold;
+				font-family: PingFangSC-regular;
+			}
+			
+			.uni-tab-item-title-active{
+				font-weight: bold;
+			}
+			
+			.mark{
+				width: 6px;
+				height: 6px;
+				background-color: rgba(217, 192, 119, 100);
+				border-radius: 6px;
+				text-align: center;
+				margin-top:5px;
+			}
+			
+			.flex{
+				display:flex !important;
+			}
+			
+			.row {
+				flex-direction:row;
+			}
+			
+			.column{
+				flex-direction: column;
+			}
+			
+			.align-center{
+				align-items: center;
+			}
+			
+			.space-between{
+				justify-content: space-between;
+			}
+			
+			
+			body{
+				margin:0px;
+			}
+			
+			.desc_view {
+				width: 300px;
+				height: 64px;
+				border-radius: 10px 10px 10px 10px;
+				color: rgba(16, 16, 16, 100);
+				font-size: 14px;
+				text-align: center;
+				box-shadow: 0px 0px 0px 0px rgba(230, 0, 68, 50);
+				font-family: Arial;
+				background:white;
+				display: flex;
+				flex-direct:row;
+				align-items: center;
+				justify-content: space-between;
+				background-color: white;
+			}
+			
+			.next{		
+				width: 54px;
+				height: 100%;
+				line-height: 20px;
+				border-radius: 0px 10px 10px 0px;
+				color: rgba(16, 16, 16, 100);
+				background: #000;
+				font-size: 14px;
+				text-align: center;
+				box-shadow: 0px 0px 0px 0px rgba(102, 102, 102, 100);
+				font-family: Arial;
+				border: 1px solid rgba(255, 0, 0, 0);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			.home_img{
+				width:48px;
+				height:36px;
+			}
+			
+			.font-size-normal{
+				font-size: 14px;
+			}
+			
+			.font-bold{
+				font-weight: bold;
+			}
+			
+			.flex{
+				display:flex;
+			}
+			
+			.row{
+				flex-direction: row;
+			}
+			
+			.column{
+				flex-direction: column;
+			}
+			
+			.m-l-10{
+				margin-left:10px;
+			}
+			
+			.address {
+				width:170px;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				display: block;
+				overflow: hidden;
+			}
+			
+			.H_ib{
+				background:transparent !important;
+			}
+			
+			.H_ib_close{
+				display:none !important;
+			}
+			
+			.H_ib_body{
+				background: transparent !important;
+				color:rgb(0,0,0);
+				border-radius:10px;
+				border:0px;
+				box-shadow: 0px !important;
+				font-size:12px;
+				font-weight:bold;
+				padding-right:10px !important;
+				padding-left:10px !important;
+				min-width:105px;
+				position: initial !important;
+				margin-top:-10em !important;
+				margin-left:-160px !important;
+			}
+			
+			.H_ib_content{
+				color:rgb(0,0,0)
+				padding-left:10px !important;
+				margin:10px 0px !important;
+			}
+			
+			.H_ib_tail{
+				display:none;
+			}
+			
+			.loading-more {
+				display:flex;
+			    align-items: center;
+			    justify-content: center;
+			    padding-top: 10px;
+			    padding-bottom: 10px;
+			    text-align: center;
+				background: rgba(0,0,0,0.2);
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100vh;
+			}
+			
+			.loading-icon{
+				width: 40px;
+				height: 40px;
+				transition: .3s;
+				animation: loading 1s steps(12) infinite;
+			}
+				
+			@keyframes loading {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(1turn);
+				}
+			}
+		</style>
+		
+	  <!--<link href="http://developer.here.com/html/css/main.css" rel="stylesheet" />-->
+	</head>
+	<body>
+		<div id="mapContainer" class="map" style="width:100vw; height:100vh;"></div>
+		<div class="desc_view" style="display:none"></div>
+		<div class="loading-more" id="loadingView">
+			<img class="loading-icon" src="data:image/svg+xml;base64,IDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB3aWR0aD0nMTIwJyBoZWlnaHQ9JzEyMCcgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxwYXRoIGZpbGw9J25vbmUnIGQ9J00wIDBoMTAwdjEwMEgweicvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nI0U5RTlFOScgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwIC0zMCknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyM5ODk2OTcnIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoMzAgMTA1Ljk4IDY1KScvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nIzlCOTk5QScgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3JvdGF0ZSg2MCA3NS45OCA2NSknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyNBM0ExQTInIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoOTAgNjUgNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjQUJBOUFBJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKDEyMCA1OC42NiA2NSknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyNCMkIyQjInIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoMTUwIDU0LjAyIDY1KScvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nI0JBQjhCOScgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3JvdGF0ZSgxODAgNTAgNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjQzJDMEMxJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKC0xNTAgNDUuOTggNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjQ0JDQkNCJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKC0xMjAgNDEuMzQgNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjRDJEMkQyJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKC05MCAzNSA2NSknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyNEQURBREEnIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoLTYwIDI0LjAyIDY1KScvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nI0UyRTJFMicgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3JvdGF0ZSgtMzAgLTUuOTggNjUpJy8+PC9zdmc+"></img>    
+		</div>
+		<!-- <script type="text/javascript" src="libs/prettyprint.js"></script> -->
+	</body>
+	
+	<link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.0/mapsjs-ui.css" />
+	<script type="text/javascript" src="https://js.api.here.com/v3/3.0/mapsjs-core.js"></script>
+	<script type="text/javascript" src="https://js.api.here.com/v3/3.0/mapsjs-service.js"></script>
+	<script type="text/javascript" src="https://js.api.here.com/v3/3.0/mapsjs-ui.js"></script>
+	<script type="text/javascript" src="https://js.api.here.com/v3/3.0/mapsjs-mapevents.js"></script>
+	<script type="text/javascript" src="https://js.api.here.com/v3/3.0/mapsjs-places.js"></script>
+	<script type="text/javascript" src="https://js.api.here.com/v3/3.0/mapsjs-clustering.js"></script>
+		<script type="text/javascript" src="jquery.min.js"></script>
+</html>
+<script>
+	var markArray = []
+	var markers = []
+	var heremap,infobubbles,container
+	var page = 1,pageSize = 100000,type=getQuery("type"), rangeMin=getQuery("rangeMin"), rangeMax=getQuery("rangeMax"), keyword=getQuery("keyword"), status=getQuery("status")
+	var houseList = []
+	var startingStr = ""
+	var subIconSize = 100;
+	var ui
+	var bubble
+	
+	function initializeHereMap() { // rendering map
+		
+		var platform = new H.service.Platform({
+			'app_id': 'rLH3gcQKZ8FDUWfBfckJ',
+			'app_code': 'CWWgJNAXJhCrQcLm4rsUWg',
+			useHTTPS: true
+			// apikey: 'd5IbpswCYAo-8H2KOxCy5ZEMGFNzFWKFgc8c7sA_Wi8'
+			// apikey: 'MkcE-8lR_V8yNJjm3M5zcvbOdtXVPkK-c-e9SmEs0oA'
+		});
+		var pixelRatio = window.devicePixelRatio || 1;
+		var defaultLayers = platform.createDefaultLayers({
+		    tileSize: pixelRatio === 1 ? 256 : 512,
+		    ppi: pixelRatio === 1 ? undefined : 320,
+		    lg: 'CHI'
+		});
+		
+		//Step 2: initialize a map  - not specificing a location will give a whole world view.
+		var map = new H.Map(document.getElementById('mapContainer'),
+		    defaultLayers.normal.map, {pixelRatio: pixelRatio});
+		
+		//Step 3: make the map interactive
+		// MapEvents enables the event system
+		// Behavior implements default interactions for pan/zoom (also on mobile touch environments)
+		var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+		ui = H.ui.UI.createDefault(map, defaultLayers);
+		
+		map.setCenter({lat:-37.8409, lng:144.9464});
+		map.setZoom(9);
+		
+		heremap = map;
+		// console.log("token" + getQuery("token"))
+		
+		// type = getQuery("type")
+		// rangeMin = getQuery("rangeMin") 
+		// rangeMax = getQuery("rangeMax")
+		// keyword = getQuery("keyword")
+		// status = getQuery("status")
+		houseList = JSON.parse(getQuery("houseList"))
+		//alert(JSON.parse(houseList)[0].address.lat)
+		addMarkerToMap()
+		// getProperties(getQuery("token"))	
+	}
+	
+	function addMarkerToMap() {
+		
+		if(houseList != null  && houseList.length > 0) {
+			heremap.setCenter({lat:Number(houseList[0].address.lat), lng:Number(houseList[0].address.lng)});		
+			for (var i=0;i< houseList.length;i++){
+				var price = 0
+				if(getQuery('language') != "en") {
+					price = houseList[i].price_min + "万"
+					startingStr = "价格"
+				}
+				else{
+					if(houseList[i].price_min_k < 1000) {
+						price = houseList[i].symbol + houseList[i].price_min_k + "K" 
+					}
+					else {
+						price = houseList[i].symbol + houseList[i].price_min_k / 1000 + "M" 
+					}
+					
+					startingStr = "Price"
+				}
+								
+				var subIcon = new H.map.Icon("img/map_mark.png",{size:{w: subIconSize, h: subIconSize}});
+				var marker = new H.map.Marker({lat:Number(houseList[i].address.lat),lng:houseList[i].address.lng},{icon:subIcon});
+				marker.setData( '<div class="desc_view" data-action="' + houseList[i].hash + '">	<div class="flex row" ><img class="home_img m-l-10" src="' + houseList[i].images[0].thumb_url + '">' +
+						'</img><div class="flex column m-l-10" style="text-align: left;">' +
+						'<div class="font-size-normal font-bold address">' + houseList[i].address.address + '</div>' +
+						'<div class="font-size-normal font-normal">' + startingStr + ': ' + price + '</div>' +
+						'</div></div><div class="next"  data-action="' + houseList[i].hash + '"><img src="img/left.png" style="width:32upx;height:32upx;"  data-action="' + houseList[i].hash + '"></img></div></div>');
+				marker.addEventListener('tap',function (evt) {
+					console.log("marker tap")
+					ui.removeBubble(bubble)
+					var xy = heremap.geoToScreen(evt.target.getGeometry());					
+					bubble =  new H.ui.InfoBubble(evt.target.getGeometry(), {
+					  content: evt.target.getData()
+					});
+					
+					ui.addBubble(bubble);
+				})
+				
+				heremap.addEventListener('move', function (evt){
+					ui.removeBubble(bubble)
+				})
+				 
+				heremap.addObject(marker);
+			}
+		}
+		$("#loadingView").fadeOut()	
+	}
+	
+	function getProperties(token){
+		$.ajax({
+			type: "get",
+			url: "https://console.unifyestate.com/_api/properties/list",
+			data: {
+			    token: token == null ? '' : token.trim(),
+			    page: page,
+			    pageSize: pageSize,
+			    prop_type:type == null ? '' : type,
+			    price:rangeMin + "-" + rangeMax,
+			    keyword:keyword == null ? '' : keyword,
+				status:status == null ? '' : status,
+			    country: "1",
+			},
+			contentType: "application/json",  //推荐写这个
+			dataType: "json",
+			success: function(data){
+				if(data.code == 0){
+					houseList = data.data.properties
+					addMarkerToMap()
+				}
+				else {
+					$("#loadingView").fadeOut()
+				}
+			},
+			error:function (xhr, ajaxOptions, thrownError) {
+				var errorMessage = xhr.status + ': ' + xhr.statusText
+				alert('Error - ' + errorMessage);
+				$("#loadingView").fadeOut()
+			}
+		})
+	}
+	
+	function getQuery(name) {
+		// 正则：[找寻'&' + 'url参数名字' = '值' + '&']（'&'可以不存在）
+		let reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+		let r = window.location.search.substr(1).match(reg);
+		if(r != null) {
+			// 对参数值进行解码
+			return decodeURIComponent(r[2]);
+		}
+		return null;
+	}
+	  
+	var userAgent = navigator.userAgent;
+	initializeHereMap()
+	// 待触发 `UniAppJSBridgeReady` 事件后，即可调用 uni 的 API。
+	document.addEventListener('UniAppJSBridgeReady', function() {
+		document.querySelector('.map').addEventListener('click', function(evt) {
+			
+			var target = evt.target;
+			if (target.tagName === 'DIV' || target.tagName === 'IMG') {
+				var hash = target.getAttribute('data-action');
+				console.log("hash" + hash)
+				if(hash != undefined && hash != null) {
+					uni.navigateTo({
+						url:"../house/detail?hash=" + hash
+					})
+				}
+			}
+		});
+	});
+</script>
+<script type="text/javascript" src="jquery.min.js"></script>
+
+<script type="text/javascript" src="https://js.cdn.aliyun.dcloud.net.cn/dev/uni-app/uni.webview.1.5.2.js"></script>
