@@ -80,7 +80,13 @@
 			this.hash = option.hash
 			this.latitude = option.lat
 			this.longitude = option.lng
-			this.nearByInfo = JSON.stringify(option.nearby)
+			if(option.nearby == "") {
+				this.nearByInfo = "";
+			}
+			else {
+				this.nearByInfo = JSON.stringify(option.nearby)
+			}
+			
 			this.url = this.url + "?lat=" + this.latitude + "&log=" + this.longitude + "&hash=" + this.hash + "&token="  + uni.getStorageSync("token") + "&language=zh_CN" + "&nearby=" + this.nearByInfo //+ uni.getStorageSync("language")
 			
 			//this.getDetail()

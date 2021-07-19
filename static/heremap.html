@@ -242,9 +242,12 @@
 		heremap = map;		 
 		addHomeMarker()
 		//getDetailInfo( getQuery("token"),getQuery("hash")) 
-		 
-		nearByInfo = JSON.parse(getQuery("nearby"))
-		if(nearByInfo != undefined) {
+		
+		if(getQuery("nearby") != "") {
+			nearByInfo = JSON.parse(getQuery("nearby"))
+		}
+		
+		if(nearByInfo != undefined && nearByInfo != null) {
 			nearByInfo = JSON.parse(nearByInfo)
 			console.log("nearByInfo : " + nearByInfo)
 			changeTab(0)	

@@ -1,31 +1,40 @@
 <template>
-	<view class="content w-100 skeleton">
-		<skeleton selector="skeleton" bgcolor="transparent" v-if="showSkeleton"></skeleton>
-		<uni-swiper-dot v-if="promotions.length > 0" class="promo_swiper m-t-0" :info="promotions" :dots-styles="dotsStyles" :current="current" :mode="mode">
-			<swiper class="promo_swiper-box" @change="change">
-				<swiper-item class="" v-for="(item, index) in promotions" :key="index">
-					<view class="flex column promo_swiper_item">
+	<view class="content w-100">
+		<uni-swiper-dot v-if="promotions.length > 0" class="promo_swiper m-t-0" :style="'height:' + swiperHeight + 'px'" :info="promotions" :dots-styles="dotsStyles" :current="current" :mode="mode">
+			<swiper sw="promo_swiper-box"  :style="'height:' + swiperHeight + 'px'" @change="change">
+				<swiper-item :style="'height:' + swiperHeight + 'px'" class="" v-for="(item, index) in promotions" :key="index">
+					<view class="flex column promo_swiper_item" :style="'height:' + swiperHeight + 'px'">
 						<view class="font-size-big uni-bold">{{item.title}}</view>
-						<view class="des font-size-normal ">{{item.des}}</view>
+						<view :class="'des font-size-small promo_des_' + index">{{item.des}}</view>						
 					</view>					
 				</swiper-item>
 			</swiper>
 		</uni-swiper-dot>
 		<block v-if="detailInfo != undefined">
-			<view class="header flex row space-between m-b-30 m-t-20">
-				<view class="left flex column m-l-20" style="width:600upx">
+			<view class="header flex row space-between m-b-30 m-t-20" :style="showSkeleton ? 'height:120px' : 'height:auto'">
+				<view class="left flex column m-l-15" style="width:600upx">
 					<text class="font-size-big uni-bold m-t-10 ">{{detailInfo.name == undefined ? '' : detailInfo.name}}</text>
 					<text class="font-size-normal  m-b-20 " >{{$t('Starting from')}}: <text class="uni-bold m-l-5">{{detailInfo.price}}</text></text>
 					<view class="flex row flex-wrap " >
-						<block v-if="detailInfo.tags != undefined" v-for="(item,index) in detailInfo.tags" :key="index">
-							<view class="header-item flex row align-center m-r-10">
-								<image class="icon" src="/static/img/check_yellow.png" ></image>
-								<view class="text">{{item}}</view>
-							</view>
+						<block v-if="isEnglish">
+							<block v-if="tags != undefined" v-for="(item,index) in tags" :key="index">
+								<view class="header-item flex row align-center m-r-15">
+									<image class="icon" src="/static/img/check_yellow.png"></image>
+									<view class="text">{{item}}</view>
+								</view>
+							</block>
+						</block>
+						<block v-else>
+							<block v-if="tags_cn != undefined" v-for="(item,index) in tags_cn" :key="index">
+								<view class="header-item flex row align-center m-r-15">
+									<image class="icon" src="/static/img/check_yellow.png"></image>
+									<view class="text">{{item}}</view>
+								</view>
+							</block>
 						</block>
 					</view>
 				</view>
-				<view class="right flex column m-r-20">
+				<view class="right flex column m-r-15">
 					<view class="flex column m-t-10" style="align-items: center;" @click="saveProperty">
 						<image class="icon" mode="widthFix" :src="heartSrc"/> 
 						<!-- detailInfo.isSaved ? '/static/img/heart_yellow.png' : '/static/img/heart_empty.png'"/> -->
@@ -38,20 +47,22 @@
 				</view>
 			</view>
 			
-			<view style="background:white;">
+			<view style="background:white;" class="skeleton">
+				<skeleton selector="skeleton" bgcolor="transparent" v-if="showSkeleton"></skeleton>
+				
 				<view class="w-100 skeleton-rect" style="height: 530upx;" >
 					<uni-swiper-dot v-if="detailInfo.images != undefined && detailInfo.images.length > 0" class="img_swiper m-t-0" :info="detailInfo.images" :dots-styles="dotsStyles" :current="img_current" :mode="mode">
 						<swiper class="img_swiper-box" @change="imgChange">
 							<swiper-item class="" v-for="(item, index) in detailInfo.images" :key="index">
 								<view class="flex column img_swiper_item">
-									<image class="house_img" mode="aspectFill" :src="item.url" @click="previewPropertyImage"></image>
+									<image class="house_img" mode="aspectFill" :src="item.url + '/format/webp/quality/50'" @click="previewPropertyImage"></image>
 								</view>
 							</swiper-item>
 						</swiper>
 					</uni-swiper-dot>
-<!-- 					<text v-if="detailInfo.images != undefined && detailInfo.images.length > 0" class="swiper-pos">{{img_current + 1}}/{{detailInfo.images.length}}</text>
- -->				</view>
-				<view class="p-l-20 p-r-20" style="box-sizing: border-box;">
+					<text v-if="detailInfo.images != undefined && detailInfo.images.length > 0" class="swiper-pos">{{img_current + 1}}/{{detailInfo.images.length}}</text>
+				</view>
+				<view class="p-l-15 p-r-15" style="box-sizing: border-box;">
 					<view class="summary top_label flex row space-between align-center m-t-30" style="height:80upx">
 						<text>{{$t('Project Summary')}}</text>
 						<view class=" flex row align-center" v-if="detailInfo.video != '' && detailInfo.video != undefined" @click="playVideo">
@@ -64,21 +75,27 @@
 						<video class="w-100" autoplay="true" :src="videoUrl" @error="videoErrorCallback" controls></video>
 					</view>
 					
-					<view class="flex column m-t-20 desc skeleton-rect" style="min-height: 330upx;" >
-						<text class="font-size-normal uni-bold">{{detailInfo.secondary_description == undefined ? '' : detailInfo.secondary_description}}</text>
+					<view class="flex row m-t-20" v-if='$t("Price") == "价格"'>
+						<view v-if="isEnglish" class="flex row align-center translate-btn" @click="changeTranslate(0)">
+							<image class="translate-icon m-l-10" src="/static/img/ic_eng_chi.png"></image>
+							<text class="font-size-normal m-l-10 m-r-10">{{$t("englishToChinese")}}</text>
+						</view>
+					
+						<view v-if="!isEnglish" class="flex row align-center translate-btn-active" @click="changeTranslate(1)">
+							<image class="translate-icon m-l-10" src="/static/img/ic_eng_chi.png"></image>
+							<text class="font-size-normal m-l-10 m-r-10">{{$t("chineseToEnglish")}}</text>
+						</view>
+					</view>
+					
+					<view class="flex column m-t-20 desc skeleton-rect" style="min-height: 330upx;">
+						<text class="font-size-normal uni-bold">{{isEnglish ? (detailInfo.secondary_description == undefined ? '' : detailInfo.secondary_description) : secDesCn}}</text>
 						<!-- <rich-text class="font-size-normal m-t-10" :nodes="detailInfo.description == undefined ? '' : detailInfo.description"></rich-text> -->
-						<text class="font-size-normal m-t-10">{{detailInfo.description == undefined ? '' : detailInfo.description}}</text>
+						<text class="font-size-normal m-t-10" :class="!isReadAll ? 'elllipse' : ''">
+							{{isEnglish ? (detailInfo.description == undefined ? '' : detailInfo.description) : desCn}}
+						</text>
 					</view>
-					<view class="agent flex row space-between m-t-30 ">
-						<view class="flex column m-l-20" style="margin-top:-10px;" @click="gotoAgent">
-							<text class="font-size-medium uni-bold" style="line-height: 1.5;">{{$t("Agent's Package" )}}</text>
-							<text class="font-size-xsmall" style="line-height: 1;">{{$t("Access Project Files" )}}</text>
-						</view>
-						<view class="flex column m-r-20 m-t-10 flex-end text-right" @click="gotoUnit">
-							<text class="font-size-xsmall text-right" style="line-height: 1;">{{$t("Start make reservation")}}</text>
-							<text class="font-size-medium uni-bold text-right" style="line-height: 1.5;">{{$t("Available Units" )}}</text>
-						</view>
-					</view>
+					<view class="font-size-normal uni-bold btn-read-more m-t-15 m-b-10" @click="showAllDesc">{{$t("read more")}}</view>
+					
 					<view class="top_label m-t-50 column flex flex-start"  style="align-items: flex-start !important;">
 						<text>{{$t('Amenities')}}</text>	
 						<text class="font-size-small font-normal m-t-5">{{$t("Click the map below to view location analysis")}}</text>
@@ -191,7 +208,7 @@
 					</view>
 					
 					<view class="feature m-t-20 m-l-5">
-					<view class="header flex row skeleton-rect" style="height:60upx;" v-if="detailInfo.unit_featured != undefined && detailInfo.unit_featured.length > 0">
+					<!-- <view class="header flex row skeleton-rect" style="height:60upx;" v-if="detailInfo.unit_featured != undefined && detailInfo.unit_featured.length > 0">
 						<scroll-view scroll-x="true">
 							<view class="flex row">
 								<view v-for="(item,index) in detailInfo.unit_featured" :key="index" class="item" :class="index != 0? 'm-l-20' : ''" @click="unitPos=index">
@@ -201,27 +218,37 @@
 							</view>
 							
 						</scroll-view>
-					</view>
-					<swiper class="unit-swiper m-t-0 skeleton-rect" style="height:200upx;" :current="unitPos"  @change="unitChange" >
+					</view> -->
+					<swiper class="unit_swiper_item unit-swiper m-t-0 skeleton-rect" style="height:280upx;" :current="unitPos" @change="unitChange">
 						<block v-if="detailInfo.unit_featured != undefined && detailInfo.unit_featured.length > 0">
 							<swiper-item v-for="(item,index) in detailInfo.unit_featured" :key="index">
-								<view class="flex row swiper_item align-center space-between m-t-20" @click="gotoUnitDetail(index)">
-									<view class="w-100 flex row align-center">
-										<image src="/static/img/home_plan.png" class="plan"/>
-										<view class="flex column m-l-10">
-											<view class="flex row space-between" style="width:450upx;">
-												<view class="font-size-normal uni-bold font-gray">{{item.spec_bed}}{{$t("Bed")}}</view>
-												<view class="font-size-normal uni-bold font-gray">{{item.spec_bath}}{{$t("Bath")}}</view>
-												<view class="font-size-normal uni-bold font-gray">{{$t("Price")}}:{{" " + item.price_total}}</view>
+								<view class="flex row  align-center space-between " @click="gotoUnitDetail(index)">
+									<view class="w-100 flex column">
+										<view class="w-100 flex row align-center">
+											<image :src="item.floorplan != null ? item.floorplan + '/format/webp/quality/50' : '/static/img/home_plan.png'" class="plan" />
+											<view class="flex column m-l-20">
+												<view class="flex column m-b-10">
+													<text class="uni-bold font-gray line-one">{{item.unit_number}}</text>
+													<view class="bar"></view>
+												</view>
+												<view class="font-size-normal font-gray">{{$t("Price")}}: <text class="uni-bold">{{" " + item.price_total}}</text></view>
+												<view class="flex row ">
+													<view class="font-size-normal uni-bold font-gray">{{item.spec_bed}}{{" " + $t("Bed")}}</view>
+													<view class="font-size-normal uni-bold font-gray m-l-10">{{item.spec_bath}}{{" " + $t("Bath")}}</view>
+													<view class="font-size-normal uni-bold font-gray m-l-10">{{item.spec_car}}{{" " + $t("Car")}}</view>
+													
+												</view>
 											</view>
-											
-											<text class="font-size-small font-gray" >{{$t('Land Size')}} : {{item.size_land}} {{item.size_unit}}</text>
-											<text class="font-size-small font-gray" >{{$t('House Size')}} : {{item.size_house_design}} {{item.size_unit}}</text>
+										</view>
+										<view class="split m-t-15 m-b-15"></view>
+										<view class="flex row">
+											<view class="font-size-small font-gray">{{$t('Land Size')}} : <text class="uni-bold m-l-5">{{item.size_land}}{{item.size_land == null || item.size_land == undefined || item.size_land == '' ? '' : item.size_unit}}</text></view>
+											<view class="font-size-small font-gray m-l-20">{{$t('House Size')}} : <text class="uni-bold m-l-5">{{item.size_house_design}}{{item.size_unit}}</text></view>
 										</view>
 									</view>
 								</view>
 							</swiper-item>
-						</block>					
+						</block>
 					</swiper>
 					
 					<view class="top_label flex row m-t-50">
@@ -267,6 +294,20 @@
 				</view>
 			</view>
 		</block>
+		
+		<view class="agent-footer" v-if="isLogined">
+			<view class="agent flex row space-between">
+				<view class="flex column m-l-20" style="margin-top:-10px;" @click="gotoAgent">
+					<text class="font-size-medium uni-bold" style="line-height: 1.5;">{{$t("Agent's Package" )}}</text>
+					<text class="font-size-xsmall" style="line-height: 1;">{{$t("Access Project Files" )}}</text>
+				</view>
+				<view class="flex column m-r-20 m-t-10 flex-end text-right" @click="gotoUnit">
+					<text class="font-size-xsmall text-right" style="line-height: 1;">{{$t("Start make reservation")}}</text>
+					<text class="font-size-medium uni-bold text-right" style="line-height: 1.5;">{{$t("Available Units" )}}</text>
+				</view>
+			</view>
+		</view>
+		
 		<view class="mask" v-if="isShowSaveDlg">
 			<view class="save_dlg flex column align-center">
 				<image class="close_icon m-t-10 m-r-10" style="align-self: flex-end;" mode="widthFix" src="/static/img/close-circle.png" @click="closeDlg"></image>
@@ -293,6 +334,16 @@
 		},
 		data() {
 			return {
+				swiperHeight:120,
+				tags:[],
+				tags_cn:[],
+				isLogined:'',
+				desCn: '',
+				secDesCn: '',
+				desEn: '',
+				secDesEn: '',
+				isReadAll: false,
+				isEnglish: true,
 				heartSrc:'/static/img/heart_empty.png',
 				isShowSaveDlg:false,
 				detailInfo:{},
@@ -321,7 +372,7 @@
 				latitude: 39.909,
 				longitude: 116.39742,
 				scale: 7, 
-				showSkeleton:true,
+				showSkeleton:false,
 				savedList:[]
 			}
 		},
@@ -330,13 +381,93 @@
 				title: this.$t("Promotion Detail")
 			});
 		},
+		onReady(){
+			
+		},
 		onLoad(option){
 			this.promotions = uni.getStorageSync("promotion")
-			//this.current = parseInt(option.index)
+			this.isLogined = uni.getStorageSync("isLogin")
+			
 			this.getSaveList()
 			this.getPropertyDetail(this.promotions[this.current].promotional_hcpp,this.current)
+			setTimeout(()=>{
+				this.getElementHeight('.promo_des_0')
+			},1000)
 		},
 		methods:{
+			getElementHeight(element){
+				setTimeout(()=>{
+					let query = uni.createSelectorQuery().in(this);
+					query.select(element).boundingClientRect();
+					query.exec((res) => {
+						if(!res) {
+							this.getElementHeight();
+						}
+						else {
+							if(res[0].height > 0) {
+								this.swiperHeight = res[0].height * 1.3  + uni.upx2px(100) + 30
+							}
+							else {
+								this.swiperHeight = uni.upx2px(100) + 30 + 20 * 2
+							}
+							
+							this.showSkeleton = true
+						}
+					})
+				},20)
+			},
+			changeTranslate(index) {
+				if (index == 0) {
+					this.isEnglish = false;
+				} else {
+					this.isEnglish = true;
+				}
+			},
+			showAllDesc() {
+				this.isReadAll = !this.isReadAll
+			},
+			getTranslate(hash, lang) {
+				var that = this
+				// showLoading(this.$t("Loading"))
+				uni.request({
+					url: apiUrl.getTranslate, //仅为示例，并非真实接口地址。
+					data: {
+						token: uni.getStorageSync("token"),
+						hash: hash,
+						lang: lang
+					},
+					success: (res) => {
+						// hideLoading()
+						console.log(res.data);
+						if (res.data.code == 0) {
+							if (res.data.data != null) {
+								if (lang == "zh") {
+									that.desCn = res.data.data.description_cn
+									that.secDesCn = res.data.data.secondary_description_cn
+								} else {
+									that.desEn = res.data.data.description_en
+									that.secDesEn = res.data.data.secondary_description_en
+								}
+								
+								if(uni.getStorageSync("language") != "en") {
+									if(res.data.data.tags_cn != null && res.data.data.tags_cn != '' ) {
+										that.tags_cn = res.data.data.tags_cn[0].split("、")
+									}
+								}
+							}
+						} else {
+							uni.showToast({
+								icon: 'none',
+								title: res.data.message
+							});
+						}
+			
+						setTimeout(() => {
+							that.showSkeleton = false
+						}, 200)
+					}
+				});
+			},
 			closeDlg(){
 				this.isShowSaveDlg = false
 			},
@@ -394,6 +525,7 @@
 					this.detailInfo = this.promotions[this.current].property
 					this.setHeartIcon()
 				}
+				this.getElementHeight('.promo_des_' + this.current)
 			},
 			imgChange(e){
 				this.img_current = parseInt(e.detail.current);
@@ -445,6 +577,8 @@
 						if(res.data.code == 0){
 							if(res.data.data != null) {
 								that.detailInfo = res.data.data
+								
+								that.tags = that.detailInfo.tags
 								if(uni.getStorageSync("language") == "en") {
 									// if(that.detailInfo.price_min_k < 1000) {
 									// 	that.detailInfo.price = that.detailInfo.symbol + that.detailInfo.price_min_k + "K" 
@@ -452,7 +586,7 @@
 									// else {
 									// 	that.detailInfo.price = that.detailInfo.symbol + that.detailInfo.price_min_k / 1000 + "M" 
 									// }
-									that.detailInfo.price = that.detailInfo.symbol + common.currency(that.detailInfo.price_min)
+									that.detailInfo.price = that.detailInfo.symbol + common.currency(that.detailInfo.price_min * 10000)
 									that.detailInfo.suburb = that.detailInfo.suburb_en
 									if(that.detailInfo.unit_featured.length > 0) {
 										for(var i = 0; i < that.detailInfo.unit_featured.length; i++) {
@@ -481,8 +615,11 @@
 									}
 								}	
 								
+								that.getTranslate(hash,'zh')
 								that.setHeartIcon()
 								that.promotions[index].property = that.detailInfo
+								
+								
 							}
 						}						
 						else {
@@ -576,23 +713,49 @@
 					var baseStr = "hash=" + this.detailInfo.hash + "&user_hash=" + uni.getStorageSync("userInfo").user.hash
 					var base64 = btoa(baseStr)
 					var base66 = "c" + base64.substring(0,5) + "t" + base64.substring(5)
+					
+					var title = ""
+					var desc = ""
+					
+					//不是公司成员
+					if(uni.getStorageSync("userInfo").user.company_portal_hash == null || uni.getStorageSync("userInfo").user.company_portal_hash == '') {
+						desc = this.detailInfo.secondary_description
+						if(uni.getStorageSync("language") == 'en') {
+							title = this.detailInfo.proptype_en + ": " + this.detailInfo.name
+						}
+						else {
+							title = this.detailInfo.proptype + ": " + this.detailInfo.name
+						}
+					}
+					else {  //公司成员
+						if(uni.getStorageSync("language") == 'en') {
+							title = this.detailInfo.proptype_en + ": " + this.detailInfo.name
+							desc = "Project shared by Asialand - " + uni.getStorageSync("userInfo").user.name + " " + uni.getStorageSync("userInfo").user.surname
+						}
+						else {
+							title = this.detailInfo.proptype + ": " + this.detailInfo.name
+							desc = "由 Asialand - " + uni.getStorageSync("userInfo").user.surname + " " + uni.getStorageSync("userInfo").user.name + "为您分享"
+							
+						}
+					}
+					
 					showLoading()
 					uni.share({
-					provider: "weixin", // 服务商
-					scene: "WXSceneSession", // 场景 微信好友WXSceneSession  朋友圈WXSceneTimeLine
-					type: 0, // 图文0 文字1 图片2
-					href: common.shareUrl, // 分享h5地址
-					title: this.detailInfo.name,
-					summary: this.detailInfo.address.address, // 描述
-					imageUrl: this.detailInfo.images[0].thumb_url,
-					success: function (res) {
-						hideLoading()
-						console.log("success:" + JSON.stringify(res));
-					},
-					fail: function (err) {
-						hideLoading()
-						console.log("fail:" + JSON.stringify(err));
-					}
+						provider: "weixin", // 服务商
+						scene: "WXSceneSession", // 场景 微信好友WXSceneSession  朋友圈WXSceneTimeLine
+						type: 0, // 图文0 文字1 图片2
+						href: uni.getStorageSync("language") != 'en' ? common.shareUrl + "property/" + base66 : common.shareUrl_en + "property/" + base66, // 分享h5地址					
+						title: title,
+						summary: desc, // 描述
+						imageUrl: this.detailInfo.images[0].thumb_url,
+						success: function (res) {
+							hideLoading()
+							console.log("success:" + JSON.stringify(res));
+						},
+						fail: function (err) {
+							hideLoading()
+							console.log("fail:" + JSON.stringify(err));
+						}
 					});
 				}
 			}
@@ -601,25 +764,27 @@
 </script>
 
 <style>
-	.promo_swiper, .promo_swiper-box {
+/* 	.promo_swiper, .promo_swiper-box {
 		height: 250upx;
-	}
+	} */
 	
 	.promo_swiper_item{
 		color:#D9C077;
 		background: #2a2a2a;
-		padding:20px;
-		height: 250upx;
+		padding:40upx 30upx;
+		/* //height: 250upx; */
 	}
+	
 	.swiper, .swiper-box {
 		height: 500upx;
 	}
 	.des {
-		 overflow: hidden;
-		   text-overflow: ellipsis;
-		   display: -webkit-box;
-		   -webkit-line-clamp: 2; /* number of lines to show */
-		   -webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 3; /* number of lines to show */
+		-webkit-box-orient: vertical;
+		line-height: 1.3;
 	}
 	
 	.uni-swiper__dots-nav{
@@ -628,8 +793,7 @@
 		color: #D9C077 !important;
 	}
 	
-	.uni-swiper__dots-box {
-		margin-bottom:60upx;
+	.promo_swiper .uni-swiper__dots-box {
 		justify-content: flex-start !important;
 		margin-left:20px;
 	}
@@ -677,7 +841,7 @@
 		position:absolute;
 		right:20px;
 		z-index: 100000;
-		margin-top:-35px;
+		margin-top:-25px;
 		color:#000;
 		font-weight: bold;
 	}
@@ -718,10 +882,12 @@
 		background-image: url(/static/img/back.png);
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
-		height:130upx;
+		height: 130upx;
 		align-items: center;
+		width: 680upx;
+		box-sizing: border-box;
 	}
-	
+
 	.summary .text{
 		font-size:32upx;
 		font-weight: bold;
@@ -835,5 +1001,65 @@
 	.save_des{
 		padding: 0px 30px;
 		box-sizing: border-box;
+	}
+	
+	.translate-btn {
+		height: 60upx;
+		line-height: 60upx;
+		border-radius: 10upx;
+		background-color: white;
+		text-align: center;
+		border: 1px solid #D9C077;
+	}
+	
+	.translate-btn-active {
+		height: 60upx;
+		line-height: 60upx;
+		border-radius: 10upx;
+		background-color: #D9C077;
+		text-align: center;
+		border: 1px solid #D9C077;
+	
+	}
+	
+	.translate-icon {
+		width: 36upx;
+		height: 36upx;
+	}
+	
+	.btn-read-more {
+		color: #D9C077;
+	}
+	
+	.elllipse {
+		word-break: break-all;
+		display: -webkit-box;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 6;
+	}
+	
+	.unit_swiper_item {
+		border: 1px solid #D9C077;
+		padding: 40upx;
+	}
+	
+	.split {
+		width: 100%;
+		height: 2upx;
+		background-color: #aaa;
+	}
+	
+	.agent-footer{
+		position: fixed;
+		bottom:0px; 
+		height:170upx;
+		display:flex;
+		align-items: center;
+		background-color: white;
+		justify-content: center;
+		width: 100%;
+		z-index:100000;
 	}
 </style>

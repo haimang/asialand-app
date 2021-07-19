@@ -54,13 +54,15 @@
 		{
 		    "path": "pages/user/reservations",
 		    "style": {
-		    	"navigationBarTitleText": "" 	        
+		    	"navigationBarTitleText": "",
+				"navigationBarBackgroundColor":"white"
 		    }
 		},
 		{
 		    "path": "pages/user/properties",
 		    "style": {
-		    	"navigationBarTitleText": "" 	 	        
+		    	"navigationBarTitleText": "",
+				"navigationBarBackgroundColor":"white"
 		    }
 		},
 		{
@@ -122,7 +124,8 @@
 		    "path": "pages/search/result",
 			"style": {
 				"navigationBarTitleText": "",
-				"enablePullDownRefresh": true
+				"enablePullDownRefresh": true,
+				"navigationBarBackgroundColor":"white"
 			}
 		},
 		{

@@ -7,11 +7,11 @@
 		<!-- #endif --> 
 		<view v-if="isLogin" class="w-100">
 			<view class="header flex column">
-				<image class="login-logo m-b-10 m-l-20 m-t-30" src="/static/img/logo.png"/>
-				<text class="font-size-big m-l-20 uni-bold">
+				<image class="login-logo m-b-10 m-l-15 m-t-30" src="/static/img/logo.png"/>
+				<text class="font-size-big m-l-15 uni-bold">
 					{{$t('Notifications')}}
 				</text>
-				<text class="font-size-normal m-l-20 m-b-20">
+				<text class="font-size-normal m-l-15 m-b-20">
 					{{$t('Projects update and sales promotions')}}
 				</text>
 			</view>
@@ -20,7 +20,7 @@
 					<view class="flex row align-center w-100">
 						<!-- <view class="ic_mark_small"></view> -->
 						<!-- <image class="mark" src="/static/img/mark.png" @click="gotoDetail"></image> -->
-						<image class="img" :src="item.image != '' ? item.image : '/static/img/ic_room_default.png'"></image>
+						<image class="img" :src="item.image != '' ? item.image + '/format/webp/quality/50' : '/static/img/ic_room_default.png'"></image>
 						<view class="item_content flex column m-l-10">
 							<text :class="item.status == 0 ? 'font-size-medium uni-bold' : item.status == 1 ? 'font-size-medium uni-bold font-xGray' : ''">{{item.title}}</text>
 							<text :class="item.status == 0 ? 'font-size-small' : item.status == 1 ? 'font-size-small font-xGray' : ''">{{item.des}}</text>					
@@ -42,7 +42,7 @@
 			<image class="loading-icon" src="data:image/svg+xml;base64,IDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB3aWR0aD0nMTIwJyBoZWlnaHQ9JzEyMCcgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxwYXRoIGZpbGw9J25vbmUnIGQ9J00wIDBoMTAwdjEwMEgweicvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nI0U5RTlFOScgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwIC0zMCknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyM5ODk2OTcnIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoMzAgMTA1Ljk4IDY1KScvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nIzlCOTk5QScgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3JvdGF0ZSg2MCA3NS45OCA2NSknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyNBM0ExQTInIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoOTAgNjUgNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjQUJBOUFBJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKDEyMCA1OC42NiA2NSknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyNCMkIyQjInIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoMTUwIDU0LjAyIDY1KScvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nI0JBQjhCOScgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3JvdGF0ZSgxODAgNTAgNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjQzJDMEMxJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKC0xNTAgNDUuOTggNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjQ0JDQkNCJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKC0xMjAgNDEuMzQgNjUpJy8+PHJlY3Qgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHg9JzQ2LjUnIHk9JzQwJyBmaWxsPScjRDJEMkQyJyByeD0nNScgcnk9JzUnIHRyYW5zZm9ybT0ncm90YXRlKC05MCAzNSA2NSknLz48cmVjdCB3aWR0aD0nNycgaGVpZ2h0PScyMCcgeD0nNDYuNScgeT0nNDAnIGZpbGw9JyNEQURBREEnIHJ4PSc1JyByeT0nNScgdHJhbnNmb3JtPSdyb3RhdGUoLTYwIDI0LjAyIDY1KScvPjxyZWN0IHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyB4PSc0Ni41JyB5PSc0MCcgZmlsbD0nI0UyRTJFMicgcng9JzUnIHJ5PSc1JyB0cmFuc2Zvcm09J3JvdGF0ZSgtMzAgLTUuOTggNjUpJy8+PC9zdmc+"></image>    
 			<text class="loading-more-text m-l-10">{{$t('Loading')}}</text>
 		</view>
-		<view class="loading-more m-t-5" v-if="isEndList">
+		<view class="loading-more-nodata m-t-5" v-if="isEndList">
 			<text class="loading-more-text">{{$t('No more data')}}</text>
 		</view>
 	</view>
@@ -175,7 +175,7 @@
 	}
 	
 	.item{
-		margin:30px 10px;
+		margin:40upx 30upx;
 		display:flex;
 		flex-direction:row;
 		background:white;
@@ -226,11 +226,30 @@
 	    text-align: center;
 	}
 	
+	.loading-more-nodata {
+		position: fixed;
+		bottom: 10px;
+		width: 100%;
+		display:flex;
+		align-items: center;
+		justify-content: center;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		text-align: center;
+	}
+	
 	.loading-more-text {
 	    font-size: 28upx;
 	    color: #999;
 	}
-	
+
+	.loading-icon{
+		width: 40upx;
+		height: 40upx;
+		transition: .3s;
+		animation: loading 1s steps(12) infinite;
+	}
+		
 	.img{
 		width:100upx;
 		height:80upx;

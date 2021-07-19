@@ -10,11 +10,11 @@
 			<skeleton selector="skeleton" bgcolor="transparent" v-if="showSkeleton"></skeleton>
 			
 			<view class="header flex column">
-				<image class="login-logo m-b-10 m-l-20 m-t-30" src="/static/img/logo.png"/>
-				<text class="font-size-big m-l-20 uni-bold">
+				<image class="login-logo m-b-10 m-l-15 m-t-30" src="/static/img/logo.png"/>
+				<text class="font-size-big m-l-15 uni-bold">
 					{{$t('Promotions')}}
 				</text>
-				<text class="font-size-normal m-l-20 m-b-20">
+				<text class="font-size-normal m-l-15 m-b-20">
 					{{$t('Recent vendors and Agents incentives')}}
 				</text>
 			</view>
@@ -152,7 +152,7 @@
 	}
 	
 	.item{
-		margin:10px;
+		margin:40upx 30upx;
 		box-sizing: border-box;
 		height:400upx;
 		justify-content: space-between;

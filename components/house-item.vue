@@ -1,7 +1,7 @@
 <template>
 	<view class="product">
 		<view class="product-title">{{info.name}}</view>
-		<image class="product-image" mode="aspectFill" :src="info.images[0].url ? info.images[0].url : '/static/img/home1.png'"
+		<image class="product-image" mode="aspectFill" :src="info.images[0].url ? info.images[0].url + '/format/webp/quality/50' : '/static/img/home1.png'"
 		 @click="gotoDetail"></image>
 		<view class="product-info flex row m-b-10">
 			<view class="product-info-view flex column m-t-10">
@@ -18,7 +18,7 @@
 			<view class="flex row product-btn">
 				<image :src="!isSaved ? '/static/img/heart_black.png' : '/static/img/heart_yellow.png'" class="icon" mode="widthFix"
 				 @click="saveProperty"></image>
-				<image src="/static/img/arrow_left.png" mode="widthFix" style="width:46upx" class="m-l-20" @click="share"></image>
+				<image src="/static/img/arrow_left.png" mode="widthFix" style="width:46upx" class="m-l-10" @click="share"></image>
 			</view>
 		</view>
 		<hr>
@@ -27,7 +27,7 @@
 				<view class="flex row">
 					<!-- <image src="/static/img/mark.png" class="mark"></image> -->
 					<view class="ic_mark_small"></view>
-					<text class="m-l-10 uni-bold font-size-small">{{info.units.length}} {{$t('Available Units')}}</text>
+					<text class="m-l-10 uni-bold font-size-small">{{info.units.length}} {{$t('Featured Units')}}</text>
 				</view>
 				<view class="flex row" @click="clickShowMore">
 					<text class="font-gray font-size-small">{{isShowMore ? $t('Collapse') : $t('Show more')}}</text>
@@ -42,7 +42,7 @@
 						<image :src="item.floorplan" mode="aspectFill" class="img_plan"></image>
 						<view class="flex column">
 							<text class="m-l-20 uni-bold font-size-small">{{item.unit_number}}</text>
-							<text class="m-l-20 font-size-small font-gray">{{item.spec_bed}}{{" " + $t('Bed')}} {{item.spec_bath}}{{" " + $t('Bath')}} {{item.spec_car}}{{" " + $t('Car')}}</text>
+							<text class="m-l-20 font-size-small font-gray">{{item.spec_bed}}{{" " + $t('Bed')}} {{item.spec_bath}}{{" " + $t('Bath')}} {{" " + item.spec_car}}{{" " + $t('Car')}}</text>
 						</view>
 					</view>
 				</block>
@@ -171,14 +171,39 @@
 					var base64 = btoa(baseStr)
 					var base66 = "c" + base64.substring(0, 5) + "t" + base64.substring(5)
 					showLoading()
-
+					
+					var title = ""
+					var desc = ""
+					
+					//不是公司成员
+					if(uni.getStorageSync("userInfo").user.company_portal_hash == null || uni.getStorageSync("userInfo").user.company_portal_hash == '') {
+						desc = this.info.secondary_description
+						if(uni.getStorageSync("language") == 'en') {
+							title = this.info.prop_type_en + ": " + this.info.name
+						}
+						else {
+							title = this.info.prop_type + ": " + this.info.name
+						}
+					}
+					else {  //公司成员
+						if(uni.getStorageSync("language") == 'en') {
+							title = this.info.prop_type_en + ": " + this.info.name
+							desc = "Project shared by Asialand - " + uni.getStorageSync("userInfo").user.name + " " + uni.getStorageSync("userInfo").user.surname
+						}
+						else {
+							title = this.info.prop_type + ": " + this.info.name
+							desc = "由 Asialand - " + uni.getStorageSync("userInfo").user.surname + " " + uni.getStorageSync("userInfo").user.name + "为您分享"
+							
+						}
+					}
+					
 					uni.share({
 						provider: "weixin", // 服务商
 						scene: "WXSceneSession", // 场景 微信好友WXSceneSession  朋友圈WXSceneTimeLine
 						type: 0, // 图文0 文字1 图片2
-						href: common.shareUrl + "/property/" + base66, // 分享h5地址
-						title: this.info.name,
-						summary: this.info.address.address, // 描述
+						href: uni.getStorageSync("language") != 'en' ? common.shareUrl + "property/" + base66 : common.shareUrl_en + "property/" + base66, // 分享h5地址
+						title: title,
+						summary: desc, // 描述
 						imageUrl: this.info.images[0].thumb_url,
 						success: function(res) {
 							hideLoading()

@@ -6,11 +6,11 @@
 		</view> -->
 		<!-- #endif -->
 		<view class="header flex column">
-			<image class="login-logo m-b-10 m-l-20 m-t-20" src="/static/img/logo.png" />
-			<text class="font-size-big m-l-20 uni-bold">
+			<image class="login-logo m-b-10 m-l-15 m-t-20" src="/static/img/logo.png" />
+			<text class="font-size-big m-l-15 uni-bold">
 				{{$t('Contact Us')}}
 			</text>
-			<text class="font-size-normal m-l-20 m-b-20">
+			<text class="font-size-normal m-l-15 m-b-20">
 				{{$t('Let us know your feedback.')}}
 			</text>
 		</view>
@@ -19,7 +19,7 @@
 			<text class="font-size-normal">{{$t("Contact Us Letter")}}</text>
 			<view class="flex row m-t-20 align-center">
 				<view class="flex column ">
-					<text class="font-size-normal uni-bold">Asialand</text>
+					<text class="font-size-normal uni-bold">Asialand\n</text>
 					<text class="font-size-normal ">{{$t('Email')}} : {{email}}</text>
 					<text class="font-size-normal ">{{$t('Mobile')}} : {{mobile}}</text>
 				</view>
@@ -44,7 +44,7 @@
 				personArr: [],
 				isLogin:false,
 				email:'info@asialand.com.au',
-				mobile:"+61 3 8686 8388"
+				mobile:"+61 (03) 8686 8388"
 			}
 		},
 		onLoad(option) {
@@ -102,7 +102,7 @@
 
 	.data {
 		width: 100%;
-		padding: 40upx;
+		padding: 40upx 30upx;
 		box-sizing: border-box;
 	}
 

@@ -10,7 +10,7 @@
 			</button>
 		</view>
 		<view class="data">
-			<text class="font-size-normal">{{$t('Find')}} <text class="uni-bold m-l-5 m-r-5 ">{{houseList.length}}</text> {{$t('Projects')}}</text>
+			<text class="font-size-normal">{{$t('Find')}} <text class="uni-bold m-l-5 m-r-5 ">{{totalCnt}}</text> {{$t('Projects')}}</text>
 			<scroll-view class="scroll-v list" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
 				<view class="m-t-20 w-100">
 					<view class="m-t-20" v-for="(item, idx) in houseList" :key="idx">
@@ -52,7 +52,8 @@
 				isLoading:false,
 				page:1,
 				pageSize:10,
-				type_str:''
+				type_str:'',
+				totalCnt:0,
 			}
 		},
 		components:{
@@ -172,6 +173,7 @@
 						console.log(res.data);
 						if(res.data.data.properties != null && res.data.data.properties.length > 0 ) {								
 							that.tempList = that.tempList.concat(res.data.data.properties)
+							that.totalCnt = res.data.data.total
 							for(var p_i  = 0; p_i < that.tempList.length; p_i ++) {
 								that.tempList[p_i].isSaved = false
 							}

@@ -12,7 +12,7 @@
 			<rich-text class="font-size-normal w-100" :nodes="detailInfo.content"></rich-text>
 		</view>
 		<view class="split"></view>
-		<view v-if="detailInfo.source_url != null" class="font-small font-gray p-20 source_url" style="">{{$t("Source")}} : {{detailInfo.source_url}}</view>
+		<view v-if="detailInfo.source_url != null" class="font-small font-gray p-t-20 p-b-20 p-l-10 p-r-10 source_url" style="">{{$t("Source")}} : {{detailInfo.source_url}}</view>
 	</view>
 </template>
 
@@ -90,7 +90,7 @@
 
 	.header {
 		background: #f8f8f8;
-		padding: 50upx;
+		padding: 50upx 30upx;
 	}
 
 	.title {
@@ -100,7 +100,7 @@
 	.content {
 		background: white;
 		font-size: 28upx;
-		padding: 20upx 40upx;
+		padding: 20upx 30upx;
 		width: 670upx;
 	}
 	

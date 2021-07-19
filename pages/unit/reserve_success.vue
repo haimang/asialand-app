@@ -1,14 +1,14 @@
 <template>
 	<view class="content w-100">
 		<view class="header flex column p-t-30 p-b-20">
-			<text class="font-size-big m-l-20 uni-bold">
+			<text class="font-size-big m-l-15 uni-bold">
 				{{$t('Reservation Result of')}} {{$t("Successful")}}
 			</text>
-			<text class="font-size-normal m-l-20">
+			<text class="font-size-normal m-l-15">
 				{{projectName}}
 			</text>
 		</view>
-		<view class="data p-l-20 p-r-20">
+		<view class="data p-l-15 p-r-15">
 			<view class="label flex row m-t-30">
 				<view class="ic_mark"></view>
 				<text class="font-size-medium font-gray m-l-10 uni-bold">{{$t('Successful')}}</text>

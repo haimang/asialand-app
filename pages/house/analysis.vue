@@ -1,11 +1,11 @@
 <template>
 	<view class="flex column w-100">
 		<view class="header">
-			<text class="font-size-big white uni-bold m-l-20" style="text-shadow: 1px 2px 2px black;">{{$t('Project Investment Anaysis')}}</text>
-			<text class="font-size-small white m-l-20" style="text-shadow: 1px 2px 3px black;">{{name}}</text>
+			<text class="font-size-big white uni-bold m-l-15" style="text-shadow: 1px 2px 2px black;">{{$t('Project Investment Anaysis')}}</text>
+			<text class="font-size-small white m-l-15" style="text-shadow: 1px 2px 3px black;">{{name}}</text>
 		</view>
-		<view class="flex column p-l-20 p-r-20">
-			<view class="top_label column flex flex-start m-t-20" style="align-items: flex-start !important;">
+		<view class="flex column p-l-15 p-r-15">
+			<!-- <view class="top_label column flex flex-start m-t-20" style="align-items: flex-start !important;">
 				<text>{{$t('Unit Pricing Anaysis')}}</text>	
 			</view>
 			<view class="swiper_header flex row m-l-10 m-t-20 m-b-10">
@@ -39,7 +39,7 @@
 									<text class="font-size-normal uni-bold font-gray">{{$t("Price")}}:{{" " + item.price_total}}</text>
 									<text class="font-size-normal uni-bold font-gray">{{item.spec_bed}}{{" " + $t("Bed")}} {{item.spec_bath}}{{" " + $t("Bath")}} </text>
 									<view class="flex row" style="flex-flow:wrap">
-										<text class="font-size-small font-gray line-one m-r-10" >{{$t('Land Size')}} : {{item.size_land}}{{item.size_unit}}</text>
+										<text class="font-size-small font-gray line-one m-r-10" >{{$t('Land Size')}} : {{item.size_land}}{{item.size_land == null || item.size_land == undefined || item.size_land == '' ? '' : item.size_unit}}</text>
 										<text class="font-size-small font-gray  line-one" >{{$t('House Size')}} : {{item.size_house_design}}{{item.size_unit}}</text>
 									</view>
 								</view>
@@ -75,7 +75,7 @@
 						</view>
 					</view>
 				</swiper-item>
-			</swiper>
+			</swiper> -->
 			
 			<view class="top_label column flex flex-start m-t-30" style="align-items: flex-start !important;">
 				<text>{{$t('Country Analysis')}}</text>	
@@ -112,7 +112,7 @@
 				</view>
 			</view>
 			
-			<view class="top_label column flex flex-start m-t-30" style="align-items: flex-start !important;">
+			<!-- <view class="top_label column flex flex-start m-t-30" style="align-items: flex-start !important;">
 				<text>{{$t('Current Rental Listings')}}</text>	
 			</view>
 			
@@ -127,7 +127,7 @@
 					<view class="house-item"  v-for="(item,indexs) in houseArray" :key="indexs">
 						<view class="flex row space-between m-t-10 align-center">
 							<view class="flex row align-center">
-								<image :src="item.cover_photo" class="house_img"></image>
+								<image :src="item.cover_photo + '/format/webp/quality/50'" class="house_img"></image>
 								<view class="flex column m-l-10" style="width:320upx;">
 									<text class="font-size-normal uni-bold line-one">{{item.advertiser_name}}</text>
 									<text class="font-size-small line-one ">{{item.title}}</text>
@@ -142,7 +142,7 @@
 					<view class="house-item"  v-for="(item,indexs) in apartArray" :key="indexs">
 						<view class="flex row space-between m-t-10 align-center">
 							<view class="flex row align-center">
-								<image :src="item.cover_photo" class="house_img"></image>
+								<image :src="item.cover_photo + '/format/webp/quality/50'" class="house_img"></image>
 								<view class="flex column m-l-10" style="width:320upx;">
 									<text class="font-size-normal uni-bold line-one">{{item.advertiser_name}}</text>
 									<text class="font-size-small line-one">{{item.title}}</text>
@@ -153,8 +153,8 @@
 						</view>
 					</view>
 				</swiper-item>
-			</swiper>
-		</view>
+			</swiper>-->
+		</view> 
 	</view>	
 </template>
 

@@ -28,6 +28,7 @@ const getUserCard = host + "universal/getuserinfocard"
 const updateClientId = host + "userinfo/updateClientId"
 const getPushList = host + "push/list"
 const getPushDetail = host + "push/detail"
+const getTranslate = host + "longrental/descriptionCnTranslate"
 
 export default {
 	getTokenApi,
@@ -57,5 +58,6 @@ export default {
 	getUserCard,
 	updateClientId,
 	getPushList,
-	getPushDetail
+	getPushDetail,
+	getTranslate
 }

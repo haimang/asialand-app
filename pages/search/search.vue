@@ -58,7 +58,7 @@
 					<text class="font-size-small font-xGray m-t-5 text-center line-height-1" :class="status == 1 ? 'selected_txt' : ''">{{$t('Newly Established')}}</text>
 				</view>
 			</view>
-			<text class="font-size-normal font-gray uni-bold m-t-30">{{$t('Starting Price Range') + " (" + this.rangeMin + " - " + this.rangeMax + ")"}}</text>
+			<text class="font-size-normal font-gray uni-bold m-t-30">{{$t('Starting Price Range') + " ( " + this.rangeMin + " - " + this.rangeMax + " )"}}</text>
 			<view class="w-100 m-r-10 m-l-10 fit-width" >
 				<RangeSlider
 					:width="slideWidth"
@@ -78,18 +78,24 @@
 					<!-- 右边滑块的内容 -->
 				</RangeSlider>
 			</view>
-			<button class="login-btn m-t-20 m-b-20 m-l-0" @tap="bindSearch">
-				<image src="/static/img/fa-search.png" class="m-r-5" style="width:40upx;height:40upx;"/>{{$t("Search Properties")}}
-			</button>
+			<view class="flex row align-center">
+				<button class="login-btn m-t-20 m-b-20 m-l-0" @tap="bindSearch">
+					<image src="/static/img/fa-search.png" class="m-r-5" style="width:40upx;height:40upx;"/>{{$t("Search Properties")}}
+				</button>
+				<text class="font-xGray">{{$t('or')}}</text>
+				<button class="login-btn m-t-20 m-b-20 flex row"  @tap="gotoMap">
+					<image src="/static/img/fa-location-arrow.png" class="m-r-5" style="width:40upx;height:40upx;" mode="widthFix"></image>{{$t("Open Property Map")}}
+				</button>
+			</view>
 		</view>
 		
-		<view class="flex column" id="footer">
+		<!-- <view class="flex column" id="footer">
 			<image class="map_image" src="https://image.maps.api.here.com/mia/1.6/mapview?app_id=rLH3gcQKZ8FDUWfBfckJ&app_code=CWWgJNAXJhCrQcLm4rsUWg&lat=39.909&lon=116.39742&vt=0&z=14&w=700&h=500"></image>
 			<text class="text m-l-20 " style="text-shadow: 1px 3px 2px black;">{{text1}}</text>
 			<button class="login-btn m-t-20 m-b-20 m-l-20 flex row"  @tap="gotoMap">
 				<image src="/static/img/fa-location-arrow.png" class="m-r-5" style="width:40upx;height:40upx;" mode="widthFix"></image>{{$t("Open Property Map")}}
 			</button>
-		</view>
+		</view> -->
 	</view>
 </template>
 
@@ -118,7 +124,7 @@
 				slideMax: 5000000,
 				barHeight:10,
 				isLiveMode: true,
-				step: 1000,
+				step: 10000,
 				//
 				timeMinValue: 300000,
 				timeMaxValue: 5000000,
@@ -260,7 +266,7 @@
 	.top{
 		width: 100%;
 		
-		padding:40upx;
+		padding:40upx 30upx;
 		background-color: #f8f8f8;
 		box-sizing:border-box;
 

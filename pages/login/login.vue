@@ -6,11 +6,11 @@
 		</view>  -->
 		<!-- #endif -->
 		<view class="header flex column">
-			<image class="login-logo m-b-10 m-l-20 m-t-20" src="/static/img/logo.png" />
-			<text class="font-size-big m-l-20 uni-bold">
+			<image class="login-logo m-b-10 m-l-15 m-t-20" src="/static/img/logo.png" />
+			<text class="font-size-big m-l-15 uni-bold">
 				{{$t('Welcome Back')}}
 			</text>
-			<text class="font-size-normal m-l-20 m-b-20">
+			<text class="font-size-normal m-l-15 m-b-20">
 				{{$t('Use your E-mail account to proceed')}}
 			</text>
 		</view>
@@ -196,7 +196,7 @@
 	
 	.data{
 		width:100%;
-		padding:40upx;
+		padding:40upx 30upx;
 		box-sizing: border-box;
 	}
 	

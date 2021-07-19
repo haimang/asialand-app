@@ -1,16 +1,16 @@
 <template>
 	<view class="content w-100">
 		<view class="header flex column">
-			<text class="font-size-big m-l-20 uni-bold">
-				{{this.unitArray.length}} {{$t('Total Available Units')}}
+			<text class="font-size-big m-l-15 uni-bold">
+				{{this.totalCnt}} {{$t('Total Available Units')}}
 			</text>
-			<text class="font-size-normal m-l-20 m-b-20">
+			<text class="font-size-normal m-l-15 m-b-20">
 				{{address}}
 			</text>
-			<view class="flex row m-l-20 m-b-20">
+			<view class="flex row m-l-15 m-b-20">
 				<view class="picker_view font-size-normal" style="flex: 0 0 30%;" @click="openBedPicker">
 					<text>{{bed}}</text>
-					<image src="/static/img/antOutline-caret-down.png" style="width:24upx;height:24upx;"></image>
+					<image class="select-icon" src="/static/img/antOutline-caret-down.png"></image>
 				</view>
 				<!-- <view class="picker_view font-size-normal" style="flex: 0 0 30%;" @click="openCountryPicker">
 					<text>{{price}}</text>
@@ -18,11 +18,11 @@
 				</view> -->
 			</view>
 		</view>
-		<view class="data p-t-10 p-l-20 p-r-20">
+		<view class="data p-t-10 p-l-15 p-r-15">
 			<text class="font-size-normal">{{$t("Select an Available unit below to start reservation")}}</text>
 		</view>
 
-		<view class="flex column align-center m-t-10 unit-item m-l-20 m-r-20" v-for="(item,index) in showUnits" :key="index"
+		<view class="flex column align-center m-t-10 unit-item m-l-15 m-r-15" v-for="(item,index) in showUnits" :key="index"
 		 @click="gotoDetail(item.hash)">
 			<view class="flex row space-between w-100 m-b-10">
 				<view class="flex column">
@@ -36,13 +36,14 @@
 			</view>
 
 			<view class="w-100">
-				<image :src="item.floorplan" style="float:left" class="plan m-r-10" mode="widthFix" />
+				<image :src="item.floorplan + '/format/webp/quality/50'" style="float:left" class="plan m-r-10" mode="widthFix" />
 				<view class="flex column m-l-20">
 					<text class="font-size-normal font-gray">{{$t("Total Price")}}:<text class="uni-bold m-l-10">{{item.price_total}}</text></text>
-					<text class="font-size-normal uni-bold font-gray">{{item.spec_bed}}{{" " + $t("Bed")}} {{item.spec_bath}}{{" " + $t("Bath")}} {{item.spec_car}}{{" " + $t("Car")}} </text>
-					<view class="flex row flex-wrap">
-						<text class="font-size-small font-gray m-r-10">{{$t('Land Size')}} : {{item.size_land}}{{item.size_unit}}</text>
-						<text class="font-size-small font-gray  ">{{$t('House Size')}} : {{item.size_house_design}}{{item.size_unit}}</text>
+					<text class="font-size-normal uni-bold font-gray">{{item.spec_bed}}{{" " + $t("Bed")}} {{item.spec_bath}}{{" " + $t("Bath")}}{{" " + item.spec_car}}{{" " + $t("Car")}}
+					</text>
+					<view class="flex column flex-wrap">
+						<view class="font-size-small font-gray m-r-10">{{$t('Land Size')}} : {{item.size_land}}{{item.size_land == null || item.size_land == undefined || item.size_land == '' ? '' : item.size_unit}}</view>
+						<view class="font-size-small font-gray  ">{{$t('House Size')}} : {{item.size_house_design}}{{item.size_unit}}</view>
 					</view>
 				</view>
 			</view>
@@ -88,13 +89,14 @@
 				price: "Price",
 				hash: "",
 				page: 1,
-				pageSize: 1000000,
+				pageSize: 999,
 				unitArray: [],
 				showUnits: [],
 				bedPickArray: [],
 				pickerShow: '',
 				pickerValue: [0],
-				noData: false
+				noData: false,
+				totalCnt: 0
 			}
 		},
 		onLoad(option) {
@@ -115,8 +117,8 @@
 				}
 			}
 		},
-		onShow(){
-			uni.setNavigationBarTitle({// 修改头部标题
+		onShow() {
+			uni.setNavigationBarTitle({ // 修改头部标题
 				title: this.$t("Available Units")
 			});
 		},
@@ -182,6 +184,9 @@
 				showLoading(this.$t("Loading"))
 				uni.request({
 					url: apiUrl.getUnitList,
+					header: {
+						Authorization: "Bearer " + (uni.getStorageSync("isLogin") ? uni.getStorageSync("userInfo").authToken.token : '')
+					},
 					data: {
 						token: uni.getStorageSync("token"),
 						page: this.page,
@@ -193,6 +198,7 @@
 						hideLoading()
 						if (res.data.code == 0) {
 							this.unitArray = res.data.data.units
+							this.totalCnt = res.data.data.total
 							for (var i = 0; i < this.unitArray.length; i++) {
 								if (uni.getStorageSync("language") == "en") {
 									this.unitArray[i].price_total = '$' + common.currency(this.unitArray[i].price_total);
@@ -401,5 +407,10 @@
 	.loading-more-text {
 		font-size: 28upx;
 		color: #999;
+	}
+
+	.select-icon {
+		width: 30upx;
+		height: 20upx;
 	}
 </style>

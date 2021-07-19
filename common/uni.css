@@ -1623,6 +1623,10 @@ radio-group label, checkbox-group label{
 	padding-left:20upx;
 }
 
+.p-l-15 {
+	padding-left:30upx;
+}
+
 .p-l-20 {
 	padding-left:40upx;
 }
@@ -1634,6 +1638,11 @@ radio-group label, checkbox-group label{
 .p-r-10 {
 	padding-right:20upx;
 }
+
+.p-r-15 {
+	padding-right:30upx;
+}
+
 
 .p-r-20 {
 	padding-right:40upx;

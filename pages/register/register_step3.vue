@@ -15,7 +15,7 @@
 			</text>
 		</view>
 		<view class=" m-t-20">
-			<text class="m-l-20 m-r-20 uni-bold font-size-big ">{{$t('Step Two: Phone Verification')}}</text>
+			<text class="m-l-15 m-r-15 uni-bold font-size-big ">{{$t('Step Two: Phone Verification')}}</text>
 			<view class="input-row flex column m-t-10">				
 				<!-- <view class="flex row" style="justify-content: space-between;">
 					<input maxlength="1" class=" digit-input" type="number" focus v-model="code[0]"></input>
@@ -33,7 +33,7 @@
 		<view class="btn-row m-b-10">
 			<button class="login-btn"  @click="register">{{$t('Finish Registration')}}</button>
 		</view>
-		<view class="flex row m-l-20" style="align-items: center;" @click="changeCheckStatus">
+		<view class="flex row m-l-15" style="align-items: center;" @click="changeCheckStatus">
 			<!-- <checkbox-group class="checkBoxGroup"  @change="changeCheckStatus">
 				<checkbox class="checkBox black" :checked="agreeCheck">
 				</checkbox>
@@ -275,7 +275,7 @@
 
 	.login-header-view {
 		width: 100%;
-		padding: 60upx 40upx;
+		padding: 60upx 30upx;
 		padding-top:30upx;
 		background-color: #F8F8F8;
 	}
@@ -300,7 +300,7 @@
 		box-shadow: 0px 4upx 12upx 0px rgba(0, 0, 0, 0.4);
 		font-family: Arial;
 		border: 0px;
-		margin-left: 20upx
+		margin-left: 10upx
 	}
 	
 	

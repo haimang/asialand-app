@@ -13,6 +13,7 @@ const appSecret = "AP34LSuwdzmxlDlKjejD"
 const scene = '92paah'
 const basetext = 'tdT1IQw1VSLW9OQ1Y4dlpBU24mcD1IQ1BULWdTSHlXSzBkRXE='  //ndT1IQ51VSLW9OQ1Y4dlpBU24mcD1IQ1BULUpiNTc4dVo1bnQ=
 const shareUrl = "https://portal.asialand.com.au/asialand/h5/"
+const shareUrl_en = "https://portal.asialand.com.au/en/asialand/h5/"
 
 export default {
 	appId,
@@ -20,6 +21,7 @@ export default {
 	scene,
 	basetext,
 	shareUrl,
+	shareUrl_en,
 	isEmail(value) {
 	  const reg = /^([a-zA-Z0-9]+[-_\.]?)+@[a-zA-Z0-9.]+\.[a-z]+$/;
 	  if (value == '' || value == undefined || value == null) {
@@ -84,6 +86,23 @@ export default {
 	   return sign + currency + head +
 	     _int.slice(i).replace(digitsRE, '$1,') +
 	     _float
-	 }
-	 
+	 },
+	 getThirdToken(){
+	 	var that = this
+	 	
+	 	uni.request({
+	 	    url: "https://console.unifyestate.com/_api/thirdparty/getToken", //仅为示例，并非真实接口地址。
+	 	    data: {
+	 	        appId: appId,
+	 			appSecret: appSecret
+	 	    },
+	 	    success: (res) => {
+	 	        console.log(res.data);
+	 			
+	 			if(res.data != null) {
+	 				uni.setStorageSync("token",res.data.data.systemToken);
+	 			}
+	 	    }
+	 	});
+	},
 }

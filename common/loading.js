@@ -8,12 +8,12 @@ export function showLoading(title = '', mask = true) {
 			mask
 		});
  
-		// 最长10s自动关闭
+		// 最长60s自动关闭
 		loadingTimer = setTimeout(() => {
 			if (needLoadingRequestCount > 0) {
 				uni.hideLoading();
 			}
-		}, 10000);
+		}, 60000);
 	}
  
 	needLoadingRequestCount++;

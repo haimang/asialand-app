@@ -164,7 +164,19 @@
 						uni.stopPullDownRefresh()
 						console.log(res.data);
 						if(res.data.data.properties != null && res.data.data.properties.length > 0 ) {								
-							that.url = that.url + "?houseList=" + JSON.stringify(res.data.data.properties) + "&language=" + uni.getStorageSync("language")
+							var houseList = [];
+							for(var i = 0; i < res.data.data.properties.length; i++) {
+								var item = {
+									"hash" :res.data.data.properties[i].hash,
+									"symbol" : res.data.data.properties[i].symbol,
+									"price_min" : res.data.data.properties[i].price_min,
+									"price_max" : res.data.data.properties[i].price_max,
+									"address" : res.data.data.properties[i].address,
+									"images": res.data.data.properties[i].images
+								};
+								houseList.push(item)
+							}
+							that.url = that.url + "?houseList=" + JSON.stringify(houseList) + "&language=" + uni.getStorageSync("language")
 						} else {
 							that.url = that.url + "?houseList=&language=" + uni.getStorageSync("language")
 						}

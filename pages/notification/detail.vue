@@ -1,15 +1,17 @@
 <template>
 	<view class="content w-100">
 		<view class="header flex column">
-			<text class="font-size-big m-l-20 m-t-20 uni-bold">
+			<text class="font-size-big m-l-15 m-t-20 uni-bold">
 				{{title}}
 			</text>
-			<text class="font-size-normal m-l-20 m-b-20  m-t-20 font-xGray">
+			<text class="font-size-normal m-l-15 m-b-20  m-t-20 font-xGray">
 				{{$t('Published Date')}} : {{publishTime}}
 			</text>
 		</view>
 		<view class="data flex column align-center">		
 			<text class="font-size-normal w-100">{{detailInfo.content}}</text>
+		</view>
+		<view class="footer">
 			<button class="login-btn m-t-50"  @tap="gotoItem">{{$t('Go to project')}}</button>
 		</view>
 		<view class="attachment flex column" v-if="attachList.length > 0">
@@ -183,7 +185,7 @@
 	.data{
 		background:white;
 		width:100%;
-		padding:20px;
+		padding:40upx 30upx;
 		box-sizing: border-box;
 		margin-bottom:350upx;
 	}
@@ -278,6 +280,17 @@
 		margin-left:20upx;
 		border: 2px solid rgba(217, 192, 119, 100);
 		margin: 0 auto;
-		margin-top:100upx !important;
+	}
+	
+	.footer {
+		background-color: white;
+		display:flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		height:200upx;
+		position: fixed;
+		bottom:0px;
+		width:100%;
 	}
 </style>

@@ -1,10 +1,10 @@
 <template>
 	<view class="flex column w-100">	
 		<view class="header">
-			<text class="font-size-big white uni-bold m-l-20" style="text-shadow: 1px 3px 2px black;">{{$t("Agent's Package")}}</text>
-			<text class="font-size-small white m-l-20" style="text-shadow: 1px 2px 2px black;">{{detailInfo.name}}</text>
+			<text class="font-size-big white uni-bold m-l-15" style="text-shadow: 1px 3px 2px black;">{{$t("Agent's Package")}}</text>
+			<text class="font-size-small white m-l-15" style="text-shadow: 1px 2px 2px black;">{{detailInfo.name}}</text>
 		</view>
-		<view class="data flex column p-l-20 p-r-20">
+		<view class="data flex column p-l-15 p-r-15">
 			<view v-if="detailInfo.agent_notes !=undefined"  class="top_label column flex flex-start m-t-20" style="align-items: flex-start !important;">
 				<text>{{$t('Agents Notes')}}</text>	
 			</view>
@@ -30,6 +30,8 @@
 			</view>
 			<view class="flex column m-t-10 m-b-30">
 				<text class="font-size-normal item back-gray">{{$t('Commission')}}: <text class="uni-bold  m-l-10">{{Object.keys(detailInfo).length !== 0  && detailInfo.commission.value != null ? detailInfo.commission.value + '%' : ''}}</text></text>
+				<text class="font-size-normal item ">{{$t('GST')}}: <text class="uni-bold  m-l-10">{{Object.keys(detailInfo).length !== 0  && detailInfo.commission.gst != null ? detailInfo.commission.gst : ''}}</text></text>
+				<text class="font-size-normal item back-gray">{{$t('Schedule')}}: <text class="uni-bold  m-l-10">{{Object.keys(detailInfo).length !== 0  && detailInfo.commission.schedule != null ? detailInfo.commission.schedule : ''}}</text></text>
 				<text class="font-size-normal item">{{$t('Comment')}}: \n<text class="uni-bold">{{Object.keys(detailInfo).length !== 0 && detailInfo.commission.comment != null ? detailInfo.commission.comment : ''}}</text></text>
 			</view>
 			
@@ -114,14 +116,14 @@
 							this.detailInfo = res.data.data
 							if(uni.getStorageSync("language") == "en") {
 								
-								this.price_min = this.detailInfo.symbol + common.currency(this.detailInfo.price_min)
-								this.price_max = this.detailInfo.price_max == null ? '' :  this.detailInfo.symbol + common.currency(this.detailInfo.price_max)
+								this.price_min = this.detailInfo.symbol + common.currency(this.detailInfo.price_min * 10000)
+								this.price_max = this.detailInfo.price_max == null ? '' :  this.detailInfo.symbol + common.currency(this.detailInfo.price_max * 10000)
 								// this.price_max = this.detailInfo.symbol + (this.detailInfo.price_max / 100).toFixed(3) + "M" 								
 								this.type = this.detailInfo.proptype_en
 							}
 							else {
-								this.price_min = this.detailInfo.symbol + common.currency(this.detailInfo.price_min)
-								this.price_max = this.detailInfo.price_max == null ? '' : this.detailInfo.symbol + common.currency(this.detailInfo.price_max)
+								this.price_min = this.detailInfo.symbol + common.currency(this.detailInfo.price_min * 10000)
+								this.price_max = this.detailInfo.price_max == null ? '' : this.detailInfo.symbol + common.currency(this.detailInfo.price_max * 10000)
 								// this.price_min = this.detailInfo.price_min + this.$t("Million")
 								// this.price_max = this.detailInfo.price_max + this.$t("Million")
 								this.type = this.detailInfo.proptype

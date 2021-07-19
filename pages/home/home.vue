@@ -8,7 +8,7 @@
 		 <skeleton selector="skeleton" bgcolor="transparent" v-if="showSkeleton"></skeleton>
 		<view class="header flex row " @click="bindSearch">
 			<image class="logo m-l-10" src="/static/img/logo_icon.png"></image>
-			<text class="font-size-normal font-gray m-l-10">{{$t('Search Asialand Projects')}}</text>
+			<text class="font-size-normal font-gray m-l-10">{{$t('Search')}} <text class="m-l-5 m-r-5 uni-bold">{{totalHouseCnt}} </text> {{$t('Asialand Projects')}}</text>
 		</view>
 		<text class="font-size-medium uni-bold m-t-15 m-b-15">{{$t('Featured Projects')}}</text>
 		<uni-swiper-dot class="swiper skeleton-rect" :info="hotArray" :current="current" :mode="mode">
@@ -16,7 +16,7 @@
 				<swiper-item class="" v-for="(item, index) in hotArray" :key="index" @click="gotoPropertyDetail(item.hash, item.name, item.price)">
 					<view class="flex column swiper_item">
 						<text class="swiper_house_addr">{{item.name}}</text>
-						<image class="house_img" :src="item.images[0].url"></image>
+						<image class="house_img" :src="item.images[0].url + '/format/webp/quality/50'"></image>
 					</view>
 				</swiper-item>
 			</swiper>
@@ -24,7 +24,7 @@
 		<view class="top_label m-t-15 m-b-15 p-l-20 ">{{$t('Latest Market News')}}</view>
 		<scroll-view class="scroll_latest skeleton-rect" :scroll-x="true" :show-scrollbar="false">
 			<view v-for="(list, idx) in newsList" :key="idx" :id="idx" :data-current="idx" class="small_info column m-r-10" :style="{width: (screenWidth - 20) / 2 + 'px'}" @click="clickNews(list.hash)">
-				<image class="img" :style="{width: (screenWidth - 20) / 2 + 'px'}" :src="list.image == null ? '/static/img/ic_room_default.png' : list.image"></image>
+				<image class="img" :style="{width: (screenWidth - 20) / 2 + 'px'}" :src="list.image == null ? '/static/img/ic_room_default.png' : list.image + '/format/webp/quality/50'"></image>
 				<text class="font-size-normal house_addr line-one">{{list.name}}</text>
 				<text class="font-size-small font-xGray">{{list.published_at}}</text>
 			</view>
@@ -85,7 +85,8 @@
 				houseList: [],
 				newsList: [],
 				hotArray: [],
-				showSkeleton:true
+				showSkeleton:true,
+				totalHouseCnt:0
 			}
 		},
 		computed: mapState(['forcedLogin']),
@@ -274,10 +275,10 @@
 								// else {
 								// 	price = "$" + that.hotArray[i].price_min_k / 1000 + "M" 
 								// }
-								price = "$" + common.currency(that.hotArray[i].price_min)
+								price = "$" + common.currency(that.hotArray[i].price_min * 10000)
 							}
 							else {
-								price = "$" + common.currency(that.hotArray[i].price_min)
+								price = "$" + common.currency(that.hotArray[i].price_min * 10000)
 								//price = that.hotArray[i].price_min + that.$t("Million")
 								
 							}	
@@ -306,34 +307,48 @@
 						uni.stopPullDownRefresh()
 						
 				        console.log(res.data);
-						if(res.data.data.properties != null && res.data.data.properties.length > 0) {			
-							uni.setStorageSync("property_cnt",res.data.data.total);
-							that.tempList = that.tempList.concat(res.data.data.properties)
-							for(var p_i  = 0; p_i < that.tempList.length; p_i ++) {
-								that.tempList[p_i].isSaved = false
-							}
-							if(uni.getStorageSync("isLogin")) {
-								that.getSaveList()
-							}
-							else {
-								that.houseList = that.tempList
+						if(res.data.code == 0) {
+							if(res.data.data.properties != null && res.data.data.properties.length > 0) {
+								uni.setStorageSync("property_cnt",res.data.data.total);
+								that.tempList = that.tempList.concat(res.data.data.properties)
+								that.totalHouseCnt = res.data.data.total;
+								
+								for(var p_i  = 0; p_i < that.tempList.length; p_i ++) {
+									that.tempList[p_i].isSaved = false
+								}
+								
+								if(uni.getStorageSync("isLogin")) {
+									that.getSaveList()
+								}
+								else {
+									that.houseList = that.tempList
+									setTimeout(() => {
+										that.showSkeleton = false
+									}, 200)
+								}
+								that.isLoading = false
+								if(res.data.data.properties.length < this.pageSize) {
+									that.isEndList = true
+								}
+							} else {
 								setTimeout(() => {
 									that.showSkeleton = false
 								}, 200)
-							}
-							that.isLoading = false
-							if(res.data.data.properties.length < this.pageSize) {
+								
+								that.isLoading = false
 								that.isEndList = true
 							}
-						} else {
-							setTimeout(() => {
-								that.showSkeleton = false
-							}, 200)
+						}
+						else {
+							uni.showToast({
+								icon: 'none',
+								title: res.data.message
+							});
 							
-							that.isLoading = false
-							that.isEndList = true
-						}				
-						
+							if(res.data.message === "第三方授权登录失败或已过期") {
+								common.getThirdToken()
+							}
+						}
 				    }
 				});
 			},
@@ -451,7 +466,7 @@
 	}
 
 	.scroll_latest {
-		width: 710upx;
+		width: 100%;
 		height: 310upx;
 		white-space: nowrap;
 	}
@@ -503,5 +518,9 @@
 	    color: #999;
 	}
 	
-	
+	.content {
+		padding:30upx;
+		box-sizing: border-box;
+		width: 100%;
+	}
 </style>

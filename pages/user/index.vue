@@ -8,18 +8,18 @@
 
 		<view v-if="isLogin" class="w-100">
 			<view class="header flex column">
-				<image class="login-logo m-b-10 m-l-20 m-t-30" mode="widthFix" src="/static/img/logo.png" />
-				<text class="font-size-big m-l-20 uni-bold">
+				<image class="login-logo m-b-10 m-l-15 m-t-30" mode="widthFix" src="/static/img/logo.png" />
+				<text class="font-size-big m-l-15 uni-bold">
 					{{$t('Your membership Center')}}
 				</text>
-				<text class="font-size-normal m-l-20 m-b-20">
+				<text class="font-size-normal m-l-15 m-b-20">
 					{{$t('More resources for you to promote our projects')}}
 				</text>
 			</view>
 			<view class="data">
-				<view class="top_label m-t-15 p-l-20 m-l-10 m-r-10">{{$t('Your Information')}}</view>
-				<view class="info_view m-l-10 m-r-10 p-t-20">
-					<view class="flex row justify-center align-center m-l-20 m-t-20">
+				<view class="top_label m-t-15 p-l-20 m-l-15 m-r-15">{{$t('Your Information')}}</view>
+				<view class="info_view m-l-15 m-r-15 p-t-20">
+					<view class="flex row justify-center align-center m-l-10 m-t-20">
 						<image :src="userInfo.avatar == null || userInfo.avatar == undefined? '/static/img/header_sample.png' : userInfo.avatar"
 						 class="head"></image>
 						<view class="m-l-10" v-if="userInfo.surname != null">
@@ -27,9 +27,9 @@
 							<view class="font-size-normal">{{userInfo.company}} - {{userInfo.title}}</view>
 						</view>
 					</view>
-					<button class="login-btn m-t-30 m-l-20" @tap="updateInfo">{{$t('Update Personal Information')}}</button>
+					<button class="login-btn m-t-30 m-l-10" @tap="updateInfo">{{$t('Update Personal Information')}}</button>
 					<view class="split m-t-30 m-b-30"></view>
-					<view class="flex row m-l-20 p-b-30">
+					<view class="flex row m-l-10 p-b-30">
 						<view class="info_item" @click="gotoProperty">
 							<text class="font-size-big uni-bold col-yellow m-t-20">{{savedList.length}}</text>
 							<text class="font-size-small col-yellow line-height-1 m-t-5 p-l-10 p-r-10">{{$t('Saved Properties')}}</text>
@@ -41,10 +41,10 @@
 					</view>
 				</view>
 
-				<view class="top_label m-t-30 p-l-20 m-l-10 m-r-10">{{$t('Your Settings')}}</view>
-				<view class="info_view m-l-10 m-r-10" style="margin-bottom:50px;">
+				<view class="top_label m-t-30 p-l-20 m-l-15 m-r-15">{{$t('Your Settings')}}</view>
+				<view class="info_view m-l-15 m-r-15" style="margin-bottom:50px;">
 					<view class="flex row space-between m-b-10 p-t-10 align-center ">
-						<text class="font-size-normal m-l-10">{{$t('APP Display Language')}}</text>
+						<text class="font-size-normal m-l-20">{{$t('APP Display Language')}}</text>
 						<view class="m-r-10 flex row align-center">
 							<text class="font-size-normal">{{$t('Chinese')}}</text>
 							<switch color="#D9C077" :checked="isEn" @change="switch1Change" style="transform:scale(0.7,0.7)" />
@@ -54,15 +54,15 @@
 
 					<view class="split"></view>
 					<view class="flex row space-between m-b-10 m-t-10" @click="gotoPrivacy">
-						<text class="font-size-normal m-l-10">{{$t('Privacy Policy')}}</text>
+						<text class="font-size-normal m-l-20">{{$t('Privacy Policy')}}</text>
 					</view>
 					<view class="split"></view>
 					<view class="flex row space-between m-b-10 m-t-10" @click="gotoContactUs">
-						<text class="font-size-normal m-l-10">{{$t('Contact Us')}}</text>
+						<text class="font-size-normal m-l-20">{{$t('Contact Us')}}</text>
 					</view>
 					<view class="split"></view>
 					<view class="flex row space-between m-b-10 m-t-10" @click="logout">
-						<text class="font-size-normal m-l-10">{{$t('Sign Off')}}</text>
+						<text class="font-size-normal m-l-20">{{$t('Sign Off')}}</text>
 					</view>
 					<view class="split"></view>
 				</view>
@@ -101,7 +101,10 @@
 			}
 		},
 		onLoad() {
-			showLoading(this.$t('Loading'))
+			this.isLogin = uni.getStorageSync("isLogin")
+			if (this.isLogin) {
+				showLoading(this.$t('Loading'))
+			}
 		},
 		onShow() {
 			this.isLogin = uni.getStorageSync("isLogin")

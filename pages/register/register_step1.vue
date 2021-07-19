@@ -14,7 +14,7 @@
 				{{$t('Register your account and started selling')}}
 			</text>
 		</view>
-        <view class="m-l-20 m-r-20 m-t-20">
+        <view class="m-l-15 m-r-15 m-t-20">
 			<text class=" uni-bold font-size-big ">{{$t('Step one: Login Details')}}</text>
             <view class="input-row flex column m-t-10 w-100">
                 <text class="title uni-bold">{{$t('Your Name')}}</text>
@@ -260,7 +260,7 @@
 	
 	.login-header-view {
 		width:100%;
-		padding:60upx 40upx;
+		padding:60upx 30upx;
 		padding-top:30upx;
 		background-color: #F8F8F8;
 	}

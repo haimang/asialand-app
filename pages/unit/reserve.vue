@@ -1,14 +1,14 @@
 <template>
 	<view class="content w-100">
 		<view class="header flex column p-t-20 p-b-20">
-			<text class="font-size-big m-l-20 uni-bold">
+			<text class="font-size-big m-l-15 uni-bold">
 				{{$t('Reserve')}} {{name}}
 			</text>
-			<text class="font-size-normal m-l-20">
+			<text class="font-size-normal m-l-15">
 				{{address}}
 			</text>
 		</view>
-		<view class="data p-l-20 p-r-20">
+		<view class="data p-l-15 p-r-15">
 			<view class="label flex row m-t-30">
 				<view class="ic_mark"></view>
 				<text class="font-size-medium font-gray m-l-10 uni-bold">{{$t('Project and unit summary')}}</text>
@@ -134,10 +134,7 @@
 				<text class="font-size-medium font-gray m-l-10 uni-bold">{{$t('Important Notice')}}</text>
 			</view>
 			<view class="font-size-normal back-gray flex column p-l-20 p-r-20 p-t-10 p-b-10 m-t-20" style="margin-bottom:200upx;">
-				<text class="m-t-5">{{$t("1. Reserve this Unit in the app does not mean it will be immediately taken off from the open market.")}}</text>
-				<text class="m-t-10">{{$t("2. Reserve NOW will initiate ordering process. Only until our staff confirmed your reservation, then this Unit would be taken off from the open market.")}}</text>
-				<text class="m-t-10">{{$t("3. Once your order is confirmed, you will receive a confirmation E-mail from us, and you will need to reply that E-mail with more client's details.")}}</text>
-				<text class="m-t-10">{{$t("4. Should you have problems making reservations or have any doubts, please contact us thourgh salesadmin@xxx.com")}}</text>
+				<text class="m-t-5">{{$t("Important notice letter")}}</text>
 			</view>
 		</view>
 		<view class="footer" @click="gotoReserveSuccess">
