@@ -10,14 +10,13 @@
 					<text class="uni-bold m-l-5 line-one">{{info.address.address}}</text>
 				</view>
 				<view class="flex row font-size-small">
-					<text class="font-gray">{{$t('Price') == "价格" ? info.prop_type : info.prop_type_en}} | </text>
-					<text class="font-gray m-l-10">{{$t('Price')}}:</text>
-					<text class="uni-bold m-l-5">{{$t('Price') == "价格" ? price_cn : price_en}}</text>
+					<text class="font-gray">{{$t('Starting from') == "起售价" ? info.prop_type : info.prop_type_en}} | </text>
+					<text class="font-gray m-l-10">{{$t('Starting from')}}:</text>
+					<text class="uni-bold m-l-5">{{$t('Starting from') == "起售价" ? price_cn : price_en}}</text>
 				</view>
 			</view>
 			<view class="flex row product-btn">
-				<image :src="!isSaved ? '/static/img/heart_black.png' : '/static/img/heart_yellow.png'" class="icon" mode="widthFix"
-				 @click="saveProperty"></image>
+				<image :src="!isSaved ? '/static/img/heart_black.png' : '/static/img/heart_yellow.png'" class="icon" mode="widthFix" @click="saveProperty"></image>
 				<image src="/static/img/arrow_left.png" mode="widthFix" style="width:46upx" class="m-l-10" @click="share"></image>
 			</view>
 		</view>
@@ -41,7 +40,11 @@
 						<view class="ic_mark_small"></view>
 						<image :src="item.floorplan" mode="aspectFill" class="img_plan"></image>
 						<view class="flex column">
-							<text class="m-l-20 uni-bold font-size-small">{{item.unit_number}}</text>
+							<view class="flex row">
+								<text class="m-l-20 uni-bold font-size-small">{{item.unit_number}}</text>
+								<view class="unit_status_mark font-size-small">{{item.sales_status == 2 ? $t('Available unit') : item.sales_status == 3 ? $t('Booked') :  $t('Sold out')}}</view>
+							</view>
+
 							<text class="m-l-20 font-size-small font-gray">{{item.spec_bed}}{{" " + $t('Bed')}} {{item.spec_bath}}{{" " + $t('Bath')}} {{" " + item.spec_car}}{{" " + $t('Car')}}</text>
 						</view>
 					</view>
@@ -93,8 +96,8 @@
 			// 	this.price_en = this.info.symbol + this.info.price_min_k / 1000 + "M" 
 			// }
 
-			this.price_en = this.info.symbol + common.currency(this.info.price_min_k + "000")
-			this.price_cn = this.info.symbol + common.currency(this.info.price_min_k + "000")
+			this.price_en = this.info.symbol + common.currency(this.info.price_min_k > 1000000 ? this.info.price_min_k : this.info.price_min_k + "000")
+			this.price_cn = this.info.symbol + common.currency(this.info.price_min_k > 1000000 ? this.info.price_min_k : this.info.price_min_k + "000")
 
 			if (uni.getStorageSync("language") === "en") {
 				if (this.info.proptype_en != null && this.info.proptype_en != undefined) {
@@ -126,9 +129,19 @@
 				})
 			},
 			gotoUnitDetail(index) {
-				uni.navigateTo({
-					url: "../unit/detail?hash=" + this.info.units[index].hash
-				})
+				if (!uni.getStorageSync("isLogin")) {
+					this.gotoLogin()
+				} else {
+					if (uni.getStorageSync("userInfo").webportal.portal_type == "standard" || uni.getStorageSync("userInfo").webportal.confirmed_status == "1") {
+						uni.navigateTo({
+							url: "../error/403"
+						})
+					} else {
+						uni.navigateTo({
+							url: "../unit/detail?hash=" + this.info.units[index].hash
+						})
+					}
+				}
 			},
 			saveProperty() {
 				if (!uni.getStorageSync("isLogin")) {
@@ -171,37 +184,38 @@
 					var base64 = btoa(baseStr)
 					var base66 = "c" + base64.substring(0, 5) + "t" + base64.substring(5)
 					showLoading()
-					
+
 					var title = ""
 					var desc = ""
-					
+
 					//不是公司成员
-					if(uni.getStorageSync("userInfo").user.company_portal_hash == null || uni.getStorageSync("userInfo").user.company_portal_hash == '') {
+					if (uni.getStorageSync("userInfo").user.company_portal_hash == null || uni.getStorageSync("userInfo").user.company_portal_hash ==
+						'') {
 						desc = this.info.secondary_description
-						if(uni.getStorageSync("language") == 'en') {
+						if (uni.getStorageSync("language") == 'en') {
 							title = this.info.prop_type_en + ": " + this.info.name
-						}
-						else {
+						} else {
 							title = this.info.prop_type + ": " + this.info.name
 						}
-					}
-					else {  //公司成员
-						if(uni.getStorageSync("language") == 'en') {
+					} else { //公司成员
+						if (uni.getStorageSync("language") == 'en') {
 							title = this.info.prop_type_en + ": " + this.info.name
-							desc = "Project shared by Asialand - " + uni.getStorageSync("userInfo").user.name + " " + uni.getStorageSync("userInfo").user.surname
-						}
-						else {
+							desc = "Project shared by Asialand - " + uni.getStorageSync("userInfo").user.name + " " + uni.getStorageSync(
+								"userInfo").user.surname
+						} else {
 							title = this.info.prop_type + ": " + this.info.name
-							desc = "由 Asialand - " + uni.getStorageSync("userInfo").user.surname + " " + uni.getStorageSync("userInfo").user.name + "为您分享"
-							
+							desc = "由 Asialand - " + uni.getStorageSync("userInfo").user.surname + " " + uni.getStorageSync("userInfo").user
+								.name + "为您分享"
+
 						}
 					}
-					
+
 					uni.share({
 						provider: "weixin", // 服务商
 						scene: "WXSceneSession", // 场景 微信好友WXSceneSession  朋友圈WXSceneTimeLine
 						type: 0, // 图文0 文字1 图片2
-						href: uni.getStorageSync("language") != 'en' ? common.shareUrl + "property/" + base66 : common.shareUrl_en + "property/" + base66, // 分享h5地址
+						href: uni.getStorageSync("language") != 'en' ? common.shareUrl + "property/" + base66 : common.shareUrl_en +
+							"property/" + base66, // 分享h5地址
 						title: title,
 						summary: desc, // 描述
 						imageUrl: this.info.images[0].thumb_url,
@@ -315,5 +329,19 @@
 
 	.product-info-view {
 		width: 500upx
+	}
+
+	.unit_status_mark {
+		padding-left: 20upx;
+		padding-right: 20upx;
+		margin-left: 30upx;
+		border-radius: 2px;
+		background-color: rgba(46, 45, 43, 100);
+		color: rgba(217, 192, 119, 100);
+		font-size: 14upx;
+		text-align: center;
+		font-family: Arial;
+		height: 18px;
+		line-height: 18px;
 	}
 </style>

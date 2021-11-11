@@ -51,7 +51,7 @@
 		},
 		onLoad(option) {			
 			this.getUserCard("HCUR-oNCV8vZASn")
-			this.getUserCard("HCUR-RFE00l4kHZ")
+			// this.getUserCard("HCUR-RFE00l4kHZ")
 			this.name = uni.getStorageSync("userInfo").user.name
 			
 		},
@@ -60,6 +60,7 @@
 				title: this.$t("Signup")
 			});
 		},
+
 		methods:{
 			getUserCard(user_hash){
 				showLoading()

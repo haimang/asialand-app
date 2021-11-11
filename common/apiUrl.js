@@ -29,6 +29,8 @@ const updateClientId = host + "userinfo/updateClientId"
 const getPushList = host + "push/list"
 const getPushDetail = host + "push/detail"
 const getTranslate = host + "longrental/descriptionCnTranslate"
+const getNoReadPush = host + "v2/push/unread"
+const setReadAllPush = host + "v2/push/editstatus"
 
 export default {
 	getTokenApi,
@@ -59,5 +61,7 @@ export default {
 	updateClientId,
 	getPushList,
 	getPushDetail,
-	getTranslate
+	getTranslate,
+	getNoReadPush,
+	setReadAllPush
 }

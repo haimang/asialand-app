@@ -11,7 +11,7 @@ const appId = "K0pv4v09wNeuZ7pV"
 const appSecret = "AP34LSuwdzmxlDlKjejD"
 
 const scene = '92paah'
-const basetext = 'tdT1IQw1VSLW9OQ1Y4dlpBU24mcD1IQ1BULWdTSHlXSzBkRXE='  //ndT1IQ51VSLW9OQ1Y4dlpBU24mcD1IQ1BULUpiNTc4dVo1bnQ=
+const basetext = 'ddT1IQ31VSLW9OQ1Y4dlpBU24mcD1IQ1BULWdTSHlXSzBkRXE='  //ndT1IQ51VSLW9OQ1Y4dlpBU24mcD1IQ1BULUpiNTc4dVo1bnQ=
 const shareUrl = "https://portal.asialand.com.au/asialand/h5/"
 const shareUrl_en = "https://portal.asialand.com.au/en/asialand/h5/"
 

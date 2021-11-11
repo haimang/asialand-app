@@ -137,7 +137,9 @@
 				    },
 				    success: (res) => {
 				        console.log(res.data);
-						hideLoading()
+						setTimeout(() => {
+							hideLoading()
+						},1000);						
 						if(res.data.code == 0) {
 							getApp().globalData.isLogin = true
 							uni.setStorageSync("isLogin",true)
@@ -159,10 +161,24 @@
 							// }
 						}
 						else {
-							uni.showToast({
-							    icon: 'none',
-							    title: res.data.message
-							});
+							if(res.data.code == 218) {
+								uni.showToast({
+								    icon: 'none',
+								    title: this.$t('LOGIN_NOT_ACTIVATED_USER'),
+									duration: 5000
+								});
+							} else if(res.data.code == 220) { 
+								uni.navigateTo({
+									url: '../register/register_step2',
+								})
+							}
+							else {
+								uni.showToast({
+								    icon: 'none',
+								    title: res.data.message,
+									duration: 5000
+								});
+							}
 						}
 				    }
 				});

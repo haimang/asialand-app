@@ -1,6 +1,6 @@
 <template>
 	<view class="flex column w-100">	
-		<view class="header">
+		<view class="header" :style="'background-image:url(' + primaryImage + ');'">
 			<text class="font-size-big white uni-bold m-l-15" style="text-shadow: 1px 3px 2px black;">{{$t("Agent's Package")}}</text>
 			<text class="font-size-small white m-l-15" style="text-shadow: 1px 2px 2px black;">{{detailInfo.name}}</text>
 		</view>
@@ -35,6 +35,20 @@
 				<text class="font-size-normal item">{{$t('Comment')}}: \n<text class="uni-bold">{{Object.keys(detailInfo).length !== 0 && detailInfo.commission.comment != null ? detailInfo.commission.comment : ''}}</text></text>
 			</view>
 			
+			<view v-if="packageInfo != null" class="label flex row m-t-50">
+				<view class="ic_mark"></view>
+				<text class="font-size-medium font-gray m-l-10 uni-bold">{{$t('Files Package')}}</text>
+			</view>
+			<view v-if="packageInfo != null" class="flex column m-t-10 m-b-30">
+				<view class="font-size-normal item back-gray flex column p-l-0">
+					<text class="font-size-normal item back-gray ">{{$t('DropBox')}}: </text>
+					<text class="font-size-normal item back-gray p-r-15 p-b-10 dropbox_txt" @click="copy(packageInfo[0].package_link)">{{packageInfo[0].package_link}}</text>
+				</view>
+				
+				<text class="font-size-normal item">{{$t('Comment')}}: \n<text class="uni-bold">{{packageInfo[0].package_comment != null ? packageInfo[0].package_comment : ''}}</text></text>
+				
+			</view>
+			
 			<view class="label flex row m-t-50 align-center">
 				<view class="ic_mark"></view>
 				<view class="flex column">
@@ -43,7 +57,7 @@
 				</view>				
 			</view>
 			
-			<view class="m-t-10 m-b-50">
+			<view class="m-t-10" style="margin-bottom:150px !important;">
 				<view v-for="(item,index) in detailInfo.file" class="file_item" :key="index">
 					<view class="left flex row">
 						<view class="icon"><image src="/static/img/far fa-file-alt.png" mode="widthFix" style="width:32upx;"></image></view>
@@ -74,6 +88,7 @@
 			return {
 				hash:'',
 				type:'',
+				primaryImage:'',
 				detailInfo:{},
 				name:'',
 				note:"Settlement of this project will be started on Nov 23rd, 2020.",
@@ -87,11 +102,13 @@
 				price_max:'',				
 				commission:0,
 				comment:'',
-				attachList:[]
+				attachList:[],
+				packageInfo : {},
 			}
 		},
 		onLoad(option) {
 			this.hash = option.hash
+			this.primaryImage = option.primaryImage
 			this.getDetail()
 		},
 		onShow(){
@@ -128,6 +145,10 @@
 								// this.price_max = this.detailInfo.price_max + this.$t("Million")
 								this.type = this.detailInfo.proptype
 							}	
+							
+							if(this.detailInfo.package != null) {
+								this.packageInfo = this.detailInfo.package
+							}
 						}						
 						else {
 							uni.showToast({
@@ -174,6 +195,7 @@
 				})
 			},
 			copy(url){
+				console.log(url)
 				uni.setClipboardData({
 					data:url,//要被复制的内容
 					success:()=>{//复制成功的回调函数
@@ -194,7 +216,6 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		background-image: url(../../static/img/home1.png);
 		background-size: 100% 1000%;
 		color:white;
 	}
@@ -270,5 +291,12 @@
 		align-items: center;
 		margin-top:20upx;
 		justify-content: space-between;
+	}
+	
+	.dropbox_txt {
+		white-space: pre-wrap;		    
+		display: inline-block;
+		word-wrap: break-word;
+		line-height: 1.5;
 	}
 </style>

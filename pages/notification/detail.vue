@@ -16,13 +16,13 @@
 		</view>
 		<view class="attachment flex column" v-if="attachList.length > 0">
 			<text class="font-size-normal uni-bold m-b-20">{{$t('Attachments')}}</text>
-			<view class="m-b-20">
-				<view v-for="(item,index) in attachList" class="file_item" :key="index">
+			<view class="m-b-20 flex column">
+				<view v-for="(item,index) in attachList" class="file_item m-b-20" :key="index">
 					<view class="left flex row">
 						<view class="icon"><image src="/static/img/far fa-file-alt.png" mode="widthFix" style="width:32upx;"></image></view>
 						<view class="m-l-10">
 							<view class="font-size-small font-xGray line-height-5 line-one">{{item.type}}</view>
-							<view class="font-size-normal uni-bold  line-height-5 line-one">{{item.display_name}}</view>
+							<view class="font-size-normal uni-bold  line-height-5 line-one" style="width: 250rpx;">{{item.display_name}}</view>
 						</view>
 					</view>
 					<view class="btn_group m-l-10" style="float:right">

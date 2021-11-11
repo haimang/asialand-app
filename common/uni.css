@@ -1804,6 +1804,21 @@ radio-group label, checkbox-group label{
  	border: 0px;
  }
  
+ .small-btn {
+ 	text-align: left;
+ 	display: inline-block;
+ 	height: 60upx;
+ 	line-height: 60upx;
+ 	border-radius: 10upx;
+ 	background-color: rgba(0, 0, 0, 1) !important;
+ 	color: rgba(217, 192, 119, 100) !important;
+ 	font-size: 28upx;
+ 	font-weight: bold;
+ 	box-shadow: 0px 4upx 12upx 0px rgba(0, 0, 0, 0.4);
+ 	font-family: Arial;
+ 	border: 0px;
+ }
+ 
  .left{
 	 float:left;
  }
@@ -1858,6 +1873,14 @@ radio-group label, checkbox-group label{
  	border-top: 0px solid transparent;
  	border-right: 4upx solid #D9C077;
  	border-bottom: 25upx solid #D9C077;
+ }
+ 
+ .justify-content-between{
+	 justify-content: space-between;
+ }
+ 
+ .align-items-center {
+	 align-items: center;
  }
  
  

@@ -105,6 +105,7 @@
 			}
 		},
 		onLoad(option){
+			
 			this.tempList = []
 			this.houseList = []
 			this.page = 1
@@ -134,6 +135,10 @@
 							that.getProperties()
 							that.getArticles()
 							that.getRecommendedProperties()
+							
+							if(uni.getStorageSync("isLogin") ) {
+								that.getUnreadPush()
+							}
 						}
 				    }
 				});
@@ -192,6 +197,69 @@
 				uni.navigateTo({
 					url:"../search/search"
 				})
+			},
+			getUnreadPush() {
+				var that = this
+				uni.request({
+				    url: apiUrl.getNoReadPush, //仅为示例，并非真实接口地址。
+				    data: {
+				        token: uni.getStorageSync("token")
+				    },
+					header:{
+						Authorization: "Bearer " + uni.getStorageSync("userInfo").authToken.token
+					},
+				    success: (res) => {
+				        console.log(res.data);
+						var unreadCount = res.data.data.unread_notifications
+						uni.setStorageSync("unreadCount",unreadCount)
+						
+						console.log("unreadCount:" + unreadCount)
+						if(unreadCount > 0) {
+							uni.setTabBarBadge({
+								index:2,
+								text:unreadCount + ""
+							})
+							if(uni.getStorageSync("isShowNotificationReminder") != 1) {
+								if (uni.getStorageSync("language") == "zh_CN") {
+									uni.showModal({
+										title:"提示",
+										content:"您有" + unreadCount + "条未读消息",
+										confirmText:'好',
+										showCancel:false,
+										success:res=>{
+											if(res.confirm){
+												uni.switchTab({
+													url:"/pages/notification/index"
+												})				
+											}else{
+												// 否则点击了取消  
+											}
+										}
+									})
+								}
+								else {
+									uni.showModal({
+										title:"Reminder",
+										content:"You have " + unreadCount + " unread messages",
+										confirmText:'OK',
+										showCancel:false,
+										success:res=>{
+											if(res.confirm){
+												uni.switchTab({
+													url:"/pages/notification/index"
+												})						
+											}else{
+												// 否则点击了取消  
+											}	
+										}
+									})
+								}
+								uni.setStorageSync("isShowNotificationReminder",1)
+							}
+							
+						}
+				    }
+				});
 			},
 			getArticles(){
 				var that = this

@@ -42,8 +42,18 @@
 					<text class="font-size-normal uni-bold font-gray">{{item.spec_bed}}{{" " + $t("Bed")}} {{item.spec_bath}}{{" " + $t("Bath")}}{{" " + item.spec_car}}{{" " + $t("Car")}}
 					</text>
 					<view class="flex column flex-wrap">
-						<view class="font-size-small font-gray m-r-10">{{$t('Land Size')}} : {{item.size_land}}{{item.size_land == null || item.size_land == undefined || item.size_land == '' ? '' : item.size_unit}}</view>
-						<view class="font-size-small font-gray  ">{{$t('House Size')}} : {{item.size_house_design}}{{item.size_unit}}</view>
+						<block v-if="item.prop_type == 1">
+							<view class="font-size-small font-gray  m-r-10">{{$t('Internal Size')}} : {{item.size_interior}}{{item.size_interior == null || item.size_interior == undefined || item.size_interior == '' ? '' : item.size_unit}}</view>
+							<view class="font-size-small font-gray">{{$t('External Size')}} : {{item.size_exterior}}{{item.size_exterior == null || item.size_exterior == undefined || item.size_exterior == '' ? '' : item.size_unit}}</view>							
+						</block>
+						<block v-if="item.prop_type == 2">
+							<view class="font-size-small font-gray m-r-10">{{$t('Land Size')}} : {{item.size_land}}{{item.size_land == null || item.size_land == undefined || item.size_land == '' ? '' : item.size_unit}}</view>
+							<view class="font-size-small font-gray  ">{{$t('House Size')}} : {{item.size_house_design}}{{item.size_unit}}</view>
+						</block>
+						<block v-if="item.prop_type == 3">
+							<view class="font-size-small font-gray m-r-10">{{$t('Land Size')}} : {{item.size_land}}{{item.size_land == null || item.size_land == undefined || item.size_land == '' ? '' : item.size_unit}}</view>
+							<view class="font-size-small font-gray  ">{{$t('House Size')}} : {{item.size_house_design}}{{item.size_unit}}</view>
+						</block>
 					</view>
 				</view>
 			</view>

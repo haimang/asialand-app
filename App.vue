@@ -52,7 +52,7 @@
 				})
 			}
 
-			//this.setPushSetting();
+			this.setPushSetting();
 			console.log('App Launch')
 		},
 		onShow: function() {
@@ -136,6 +136,7 @@
 				);
 				// #endif
 			},
+			
 			getThirdToken() {
 				var that = this
 

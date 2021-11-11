@@ -24,8 +24,8 @@
             "VideoPlayer" : {},
             "SQLite" : {},
             "UIWebview" : {},
-            "Push" : {},
-            "Share" : {}
+            "Share" : {},
+            "Push" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -83,7 +83,8 @@
                     }
                 },
                 "speech" : {},
-                "ad" : {}
+                "ad" : {},
+                "push" : {}
             },
             "splashscreen" : {
                 "androidStyle" : "default",

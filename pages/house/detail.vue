@@ -76,6 +76,11 @@
 							<image class="translate-icon m-l-10" src="/static/img/ic_eng_chi.png"></image>
 							<text class="font-size-normal m-l-10 m-r-10">{{$t("chineseToEnglish")}}</text>
 						</view>
+
+						<view class="flex row copy_clipboard align-center m-l-10" @click="copyDes()">
+							<image class="copy-icon m-l-10" src="/static/img/copy_icon.png"></image>
+							<text class="font-size-normal m-l-10 m-r-10">{{$t("CopyText")}}</text>
+						</view>
 					</view>
 
 					<view class="flex column m-t-20 desc skeleton-rect" style="min-height: 330upx;">
@@ -109,21 +114,49 @@
 												 class="plan" />
 												<view class="flex column m-l-20">
 													<view class="flex column m-b-10">
-														<text class="uni-bold font-gray line-one">{{item.unit_number}}</text>
+														<view class="flex row align-center">
+															<text class="uni-bold font-gray line-one">{{item.unit_number}}</text>
+															<view class="unit_status_mark font-size-small">{{item.sales_status == 2 ? $t('Available unit') : item.sales_status == 3 ? $t('Booked') :  $t('Sold out')}}</view>
+														</view>
 														<view class="bar"></view>
 													</view>
 													<view class="font-size-normal font-gray">{{$t("Price")}}: <text class="uni-bold">{{" " + item.price_total}}</text></view>
 													<view class="flex row ">
-														<view class="font-size-normal uni-bold font-gray">{{item.spec_bed}}{{" " + $t("Bed")}}</view>
-														<view class="font-size-normal uni-bold font-gray m-l-10">{{item.spec_bath}}{{" " + $t("Bath")}}</view>
-														<view class="font-size-normal uni-bold font-gray m-l-10">{{item.spec_car}}{{" " + $t("Car")}}</view>
+														<view class="font-size-normal uni-bold font-gray m-r-10" v-if="item.spec_bed != 0">{{item.spec_bed}}{{" " + $t("Bed")}}</view>
+														<view class="font-size-normal uni-bold font-gray m-r-10" v-if="item.spec_bath != 0">{{item.spec_bath}}{{" " + $t("Bath")}}</view>
+														<view class="font-size-normal uni-bold font-gray " v-if="item.spec_car != 0">{{item.spec_car}}{{" " + $t("Car")}}</view>
 													</view>
 												</view>
 											</view>
 											<view class="split m-t-15 m-b-15"></view>
 											<view class="flex row">
-												<view class="font-size-small font-gray">{{$t('Land Size')}} : <text class="uni-bold m-l-5">{{item.size_land}}{{item.size_land == null || item.size_land == undefined || item.size_land == '' ? '' : item.size_unit}}</text></view>
-												<view class="font-size-small font-gray m-l-20">{{$t('House Size')}} : <text class="uni-bold m-l-5">{{item.size_house_design}}{{item.size_unit}}</text></view>
+												<block v-if="item.prop_type==1">
+													<view class="font-size-small font-gray flex row" v-if="item.size_interior != null && item.size_interior != 0 && item.size_interior != ''">
+														<view class="font-size-small">{{$t('Internal Size')}} :</view>
+														<view class="font-size-small uni-bold m-l-5">{{item.size_interior}}{{item.size_unit}}</view>
+													</view>
+													<view class="font-size-small font-gray flex row m-l-10" v-if="item.size_exterior != null && item.size_exterior != 0 && item.size_exterior != ''">
+														<view class="font-size-small">{{$t('External Size')}} :<text class="font-size-small uni-bold m-l-5">{{item.size_exterior}}{{item.size_unit}}</text></view>
+													</view>
+												</block>
+												<block v-if="item.prop_type==2">
+													<view class="font-size-small font-gray flex row" v-if="item.size_land != null && item.size_land != 0 && item.size_land != ''">
+														<view class="font-size-small">{{$t('Land Size')}} :<text class="font-size-small uni-bold m-l-5">{{item.size_land}}{{item.size_unit}}</text></view>
+													</view>
+													<view class="font-size-small font-gray m-l-10 flex row" v-if="item.size_house_design != null && item.size_house_design != 0 && item.size_house_design != ''">
+														<view class="font-size-small">{{$t('House Size')}} :</view>
+														<view class="font-size-small uni-bold m-l-5">{{item.size_house_design}}{{item.size_unit}}</view>
+													</view>
+												</block>
+												<block v-if="item.prop_type==3">
+													<view class="font-size-small font-gray flex row" v-if="item.size_land != null && item.size_land != 0 && item.size_land != ''">
+														<view class="font-size-small">{{$t('Land Size')}} :<text class="font-size-small uni-bold m-l-5">{{item.size_land}}{{item.size_unit}}</text></view>
+													</view>
+													<view class="font-size-small font-gray m-l-10 flex row" v-if="item.size_house_design != null && item.size_house_design != 0 && item.size_house_design != ''">
+														<view class="font-size-small">{{$t('House Size')}} :</view>
+														<view class="font-size-small uni-bold m-l-5">{{item.size_house_design}}{{item.size_unit}}</view>
+													</view>
+												</block>
 											</view>
 										</view>
 
@@ -276,6 +309,7 @@
 						</view>
 					</view>
 				</view>
+
 				<view class="btn-row m-b-30">
 					<button class="login-btn" @tap="gotoAnalysis">{{$t('Redirect to Premium Anaysis')}}</button>
 				</view>
@@ -285,8 +319,9 @@
 					<image mode="widthFix" style="width:30px" src="../../static/img/arrow_left_white.png"></image>
 				</view>
 			</view>
-
-			<view class="agent-footer" v-if="isLogined">
+			<!-- 			<view class="agent-footer" v-if="isLogined && userType != 'client'">
+ -->
+			<view class="agent-footer" v-if="isLogined ">
 				<view class="agent flex row space-between ">
 					<view class="flex column m-l-20" style="margin-top:-10px;" @click="gotoAgent">
 						<text class="font-size-medium uni-bold" style="line-height: 1.5;">{{$t("Agent's Package" )}}</text>
@@ -386,7 +421,8 @@
 			}
 
 			this.isLogined = uni.getStorageSync("isLogin")
-			//this.hash = "HCPP-DGUygntgGK"
+			// this.userType = uni.getStorageSync("userInfo").user.type
+			// //this.hash = "HCPP-DGUygntgGK"
 			this.getDetail()
 			if (this.isLogined) {
 				this.getSaveList()
@@ -515,17 +551,18 @@
 					},
 					success: (res) => {
 						// hideLoading()
-						console.log(res.data);
 						if (res.data.code == 0) {
 							if (res.data.data != null) {
 								this.detailInfo = res.data.data
 								this.tags = this.detailInfo.tags
-
+								console.log("images:" + this.detailInfo.images[0])
 								if (uni.getStorageSync("language") == "en") {
 									this.unitNum = "Total " + this.detailInfo.unit_num + " units"
 									this.suburb = this.detailInfo.suburb_en
 									if (this.detailInfo.unit_featured.length > 0) {
 										for (var i = 0; i < this.detailInfo.unit_featured.length; i++) {
+											console.log("land size:" + this.detailInfo.unit_featured[i].size_land)
+											console.log("house size:" + this.detailInfo.unit_featured[i].size_house_design)
 											this.detailInfo.unit_featured[i].price_total = this.detailInfo.symbol + common.currency(this.detailInfo.unit_featured[
 												i].price_total)
 										}
@@ -563,12 +600,16 @@
 				});
 			},
 			gotoAnalysis() {
-				uni.navigateTo({
-					url: "/pages/house/analysis?hash=" + this.hash + "&name=" + this.detailInfo.name
-				})
-				// uni.navigateTo({
-				// 	url:"/pages/house/test"
-				// })
+				if (uni.getStorageSync("userInfo").webportal.confirmed_status == 1 || uni.getStorageSync("userInfo").webportal.portal_type ==
+					"standard") {
+					uni.navigateTo({
+						url: "/pages/error/403"
+					})
+				} else {
+					uni.navigateTo({
+						url: "/pages/house/analysis?hash=" + this.hash + "&name=" + this.detailInfo.name
+					})
+				}
 			},
 			gotoMap() {
 				uni.navigateTo({
@@ -577,19 +618,52 @@
 				})
 			},
 			gotoAgent() {
-				uni.navigateTo({
-					url: "/pages/agent/index?hash=" + this.hash
-				})
+				if (uni.getStorageSync("userInfo").webportal.confirmed_status == 1 || uni.getStorageSync("userInfo").webportal.portal_type ==
+					"standard") {
+					uni.navigateTo({
+						url: "/pages/error/403"
+					})
+				} else {
+					var imageUrl = ""
+					if (this.detailInfo.images.length > 0) {
+						imageUrl = this.detailInfo.images[0].url;
+						for (var i = 0; i < this.detailInfo.images.length; i++) {
+							if (this.detailInfo.images[i].is_primary == 1) {
+								imageUrl = this.detailInfo.images[i].url;
+								break;
+							}
+						}
+					}
+
+					uni.navigateTo({
+						url: "/pages/agent/index?hash=" + this.hash + "&primaryImage=" + imageUrl
+					})
+				}
 			},
 			gotoUnit() {
-				uni.navigateTo({
-					url: "/pages/unit/index?hash=" + this.hash + "&name=" + this.detailInfo.name
-				})
+				if (uni.getStorageSync("userInfo").webportal.confirmed_status == 1 || uni.getStorageSync("userInfo").webportal.portal_type ==
+					"standard") {
+					uni.navigateTo({
+						url: "/pages/error/403"
+					})
+				} else {
+					uni.navigateTo({
+						url: "/pages/unit/index?hash=" + this.hash + "&name=" + this.detailInfo.name
+					})
+				}
 			},
 			gotoUnitDetail(index) {
-				uni.navigateTo({
-					url: "/pages/unit/detail?hash=" + this.detailInfo.unit_featured[index].hash
-				})
+				if (uni.getStorageSync("userInfo").webportal.confirmed_status == 1 || uni.getStorageSync("userInfo").webportal.portal_type ==
+					"standard") {
+					uni.navigateTo({
+						url: "/pages/error/403"
+					})
+				} else {
+					uni.navigateTo({
+						url: "/pages/unit/detail?hash=" + this.detailInfo.unit_featured[index].hash
+					})
+				}
+
 			},
 			dial() {
 				var userInfo = uni.getStorageSync('userInfo')
@@ -686,6 +760,18 @@
 			},
 			showAllDesc() {
 				this.isReadAll = !this.isReadAll
+			},
+			copyDes() {
+				uni.setClipboardData({
+					data: this.isEnglish ? (this.detailInfo.description == undefined ? '' : this.detailInfo.description) : this.desCn, //要被复制的内容
+					success: () => { //复制成功的回调函数
+						uni.showToast({ //提示
+							icon: 'none',
+							title: this.$t('Copy Success')
+						})
+					}
+				});
+
 			}
 		}
 	}
@@ -956,6 +1042,10 @@
 		height: 36upx;
 	}
 
+	.copy-icon {
+		width: 32upx;
+		height: 32upx;
+	}
 
 	.btn-read-more {
 		color: #D9C077;
@@ -996,5 +1086,26 @@
 		display: flex;
 		margin-right: 30upx;
 		background-color: #d9c077;
+	}
+
+	.unit_status_mark {
+		padding-left: 20upx;
+		padding-right: 20upx;
+		margin-left: 30upx;
+		border-radius: 2px;
+		background-color: rgba(46, 45, 43, 100);
+		color: rgba(217, 192, 119, 100);
+		font-size: 14upx;
+		text-align: center;
+		font-family: Arial;
+		height: 18px;
+		line-height: 18px;
+	}
+
+	.copy_clipboard {
+		border-radius: 10upx;
+		background-color: rgba(217, 192, 119, 100);
+		text-align: center;
+		border: 1px solid rgba(217, 192, 119, 100);
 	}
 </style>

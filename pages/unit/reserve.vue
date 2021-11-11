@@ -315,7 +315,8 @@
 						else {
 							uni.showToast({
 							    icon: 'none',
-							    title: res.data.message
+							    title: res.data.message,
+								duration:5000
 							});
 						}
 				    }
@@ -346,7 +347,8 @@
 						else {
 							uni.showToast({
 							    icon: 'none',
-							    title: res.data.message
+							    title: res.data.message,
+								duration:5000
 							});
 						}
 				    }
@@ -390,7 +392,8 @@
 						else {
 							uni.showToast({
 							    icon: 'none',
-							    title: res.data.message
+							    title: res.data.message,
+								duration:3000
 							});
 						}
 				    }

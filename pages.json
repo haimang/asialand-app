@@ -22,6 +22,12 @@
 		    }
 		},
 		{
+		    "path": "pages/error/403",
+		    "style": {
+		    	"app-plus":{"titleNView":false}		
+		    }
+		},
+		{
 		    "path": "pages/unit/reserve_success",
 		    "style": {
 		    	"navigationBarTitleText": ""
