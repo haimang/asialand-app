@@ -86,8 +86,12 @@
 			else {
 				this.nearByInfo = JSON.stringify(option.nearby)
 			}
-			
-			this.url = this.url + "?lat=" + this.latitude + "&log=" + this.longitude + "&hash=" + this.hash + "&token="  + uni.getStorageSync("token") + "&language=zh_CN" + "&nearby=" + this.nearByInfo //+ uni.getStorageSync("language")
+			console.log("lat:" + this.latitude)
+			console.log("lng:" + this.longitude)
+			console.log("hash:" + this.hash)
+			console.log("nearby info:" + this.nearByInfo)
+			// this.url = this.url + "?lat=" + this.latitude + "&log=" + this.longitude + "&hash=" + this.hash + "&token="  + uni.getStorageSync("token") + "&language=zh_CN" + "&nearby=" + this.nearByInfo //+ uni.getStorageSync("language")
+			this.url = this.url + "?lat=" + this.latitude + "&log=" + this.longitude + "&hash=" + this.hash + "&token="  + uni.getStorageSync("token") + "&language=zh_CN"
 			
 			//this.getDetail()
 		},

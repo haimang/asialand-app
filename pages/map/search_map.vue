@@ -149,33 +149,35 @@
 			search(){
 				var that = this
 				uni.request({
-					url: apiUrl.getPropertyList, //仅为示例，并非真实接口地址。
+					url: apiUrl.v2_getPropertyList, //仅为示例，并非真实接口地址。
 					data: {
 						token: uni.getStorageSync("token"),
 						page: 1,
-						pageSize: 10000,						
-						prop_type:that.type,
+						pagesize: 10000,	
+						scene:"app",
+						property_type:that.type,
 						price:that.rangeMin + "-" + that.rangeMax,
 						keyword:that.keyword,
 						country: "1",
-						status:that.status
+						progrress_status:that.status
 					},
 					success: (res) => {
 						uni.stopPullDownRefresh()
-						console.log(res.data);
 						if(res.data.data.properties != null && res.data.data.properties.length > 0 ) {								
 							var houseList = [];
 							for(var i = 0; i < res.data.data.properties.length; i++) {
 								var item = {
 									"hash" :res.data.data.properties[i].hash,
-									"symbol" : res.data.data.properties[i].symbol,
-									"price_min" : res.data.data.properties[i].price_min,
-									"price_max" : res.data.data.properties[i].price_max,
-									"address" : res.data.data.properties[i].address,
-									"images": res.data.data.properties[i].images
+									"symbol" : res.data.data.properties[i].price.symbol,
+									"price_min" : common.currency(res.data.data.properties[i].price.price_min),
+									"price_max" : common.currency(res.data.data.properties[i].price.price_max),
+									"address" : res.data.data.properties[i].location[1],
+									"image": res.data.data.properties[i].primary_image[0].thumb
 								};
 								houseList.push(item)
 							}
+							console.log(houseList);
+							
 							that.url = that.url + "?houseList=" + JSON.stringify(houseList) + "&language=" + uni.getStorageSync("language")
 						} else {
 							that.url = that.url + "?houseList=&language=" + uni.getStorageSync("language")

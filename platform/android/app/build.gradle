@@ -10,8 +10,8 @@ android {
         applicationId 'com.haichao.asialand'
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 107
-        versionName "1.0.7"
+        versionCode 1102
+        versionName "1.1.0.2"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

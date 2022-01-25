@@ -1776,6 +1776,15 @@ radio-group label, checkbox-group label{
 	overflow: hidden;
  }
  
+ .line-two {
+	 word-break: break-all;
+	     display: -webkit-box;
+	     overflow: hidden;
+	     text-overflow: ellipsis;
+	     -webkit-box-orient: vertical;
+	     -webkit-line-clamp: 2;
+ }
+ 
  .line-height-1{
  	line-height: 1;
  }

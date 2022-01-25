@@ -14,6 +14,7 @@ const scene = '92paah'
 const basetext = 'ddT1IQ31VSLW9OQ1Y4dlpBU24mcD1IQ1BULWdTSHlXSzBkRXE='  //ndT1IQ51VSLW9OQ1Y4dlpBU24mcD1IQ1BULUpiNTc4dVo1bnQ=
 const shareUrl = "https://portal.asialand.com.au/asialand/h5/"
 const shareUrl_en = "https://portal.asialand.com.au/en/asialand/h5/"
+const IMAGE_QUALITY_50 = "/format/webp/quality/50"
 
 export default {
 	appId,
@@ -22,6 +23,7 @@ export default {
 	basetext,
 	shareUrl,
 	shareUrl_en,
+	IMAGE_QUALITY_50,
 	isEmail(value) {
 	  const reg = /^([a-zA-Z0-9]+[-_\.]?)+@[a-zA-Z0-9.]+\.[a-z]+$/;
 	  if (value == '' || value == undefined || value == null) {

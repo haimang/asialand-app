@@ -60,6 +60,14 @@
 			}
 		},
 		onShow(){
+			if(uni.getStorageSync("user_email") != null) {
+				this.email = uni.getStorageSync("user_email") 
+			}
+			
+			if(uni.getStorageSync("user_pwd") != null) {
+				this.password = uni.getStorageSync("user_pwd") 
+			}
+			
 			uni.setNavigationBarTitle({// 修改头部标题
 				title: this.$t("Login")
 			});
@@ -128,11 +136,11 @@
 				    url: apiUrl.login, 
 					method:"POST",
 				    data: {
-						email: this.email,
+						username: this.email,
 						password: this.password,
 				        token: uni.getStorageSync("token"),
-						is_app: 1,
-						scene:common.scene + "86x@",
+						type: 1,
+						scene:"app",
 						getui_clientid: uni.getStorageSync("client_id") != null ? uni.getStorageSync("client_id") : ''
 				    },
 				    success: (res) => {
@@ -140,14 +148,34 @@
 						setTimeout(() => {
 							hideLoading()
 						},1000);						
-						if(res.data.code == 0) {
-							getApp().globalData.isLogin = true
-							uni.setStorageSync("isLogin",true)
-							uni.setStorageSync("userInfo",res.data.data.list[0])
-							this.updateClientId()
-							uni.reLaunch({
-								url:"../home/home"
-							})
+						if(res.data.message == "success") {
+							if(res.data.data.user_status[1].is_portal_user.status == 0) {
+								uni.showToast({
+								    icon: 'none',
+								    title: this.$t('LOGIN_NOT_ATTEND_PORTAL'),
+									duration: 5000
+								});
+							}
+							else if(res.data.data.user_status[1].is_portal_user.is_double_activated == 1) {
+								uni.showToast({
+								    icon: 'none',
+								    title: this.$t('LOGIN_NOT_DOUBLE_ACTIVATED'),
+									duration: 5000
+								});
+							}
+							else {
+								getApp().globalData.isLogin = true
+								uni.setStorageSync("isLogin",true)
+								uni.setStorageSync("user_email", this.email)
+								uni.setStorageSync("user_pwd", this.password)
+								uni.setStorageSync("userInfo",res.data.data)
+								this.updateClientId()
+								uni.reLaunch({
+									url:"../home/home"
+								})								
+							}
+							
+							
 							// const pages = getCurrentPages()
 							// if(pages.length > 1) {
 							// 	uni.navigateBack({
@@ -161,6 +189,7 @@
 							// }
 						}
 						else {
+							
 							if(res.data.code == 218) {
 								uni.showToast({
 								    icon: 'none',
@@ -173,11 +202,20 @@
 								})
 							}
 							else {
-								uni.showToast({
-								    icon: 'none',
-								    title: res.data.message,
-									duration: 5000
-								});
+								if (uni.getStorageSync("language") == "zh_CN") {
+									uni.showToast({
+									    icon: 'none',
+									    title: res.data.message_cn,
+										duration: 5000
+									});
+								}
+								else {
+									uni.showToast({
+									    icon: 'none',
+									    title: res.data.message_en,
+										duration: 5000
+									});
+								}
 							}
 						}
 				    }

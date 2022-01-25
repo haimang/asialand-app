@@ -1,6 +1,6 @@
 <template>
 	<view class="flex column w-100">
-		<view class="header">
+		<view class="header"  :style="'background-image:url(' + primaryImage + ');'">
 			<text class="font-size-big white uni-bold m-l-15" style="text-shadow: 1px 2px 2px black;">{{$t('Project Investment Anaysis')}}</text>
 			<text class="font-size-small white m-l-15" style="text-shadow: 1px 2px 3px black;">{{name}}</text>
 		</view>
@@ -174,6 +174,7 @@
 	export default {
 		data() {
 			return {
+				primaryImage:'',
 				countryOption: {
 					tooltip: {},
 					legend: {
@@ -276,6 +277,7 @@
 			}
 		},
 		onLoad(option) {
+			this.primaryImage = option.primaryImage
 			this.hash = option.hash
 			this.name = option.name
 			// this.hash = "HCPP-DGUygntgGK"

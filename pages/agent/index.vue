@@ -11,45 +11,33 @@
 			<text v-if="detailInfo.agent_notes !=undefined" class="font-size-normal p-b-30 m-t-10 p-t-10 p-l-10 p-r-10" style="background-color: #f8f8f8;">
 				{{detailInfo.agent_notes}}
 			</text>
-			<view class="label flex row m-t-30">
-				<view class="ic_mark"></view>
-				<text class="font-size-medium font-gray m-l-10 uni-bold">{{$t('Factsheet')}}</text>
-			</view>
-			<view class="flex column m-t-10">
-				<text class="font-size-normal item">{{$t('Project Type')}}: <text class="uni-bold m-l-10">{{type}}</text></text>
-				<text class="font-size-normal item back-gray">{{$t('Location')}}: <text class="uni-bold  m-l-10">{{Object.keys(detailInfo).length !== 0 ? detailInfo.address.address : ''}}</text></text>
-<!--			<text class="font-size-normal item">{{$t('Developer')}}: <text class="uni-bold m-l-10">{{detailInfo.developer}}</text></text>-->
- 				<text class="font-size-normal item ">{{$t('Completion')}}: <text class="uni-bold m-l-10">{{detailInfo.settle_date}}</text></text>
-				<text class="font-size-normal item back-gray">{{$t('Total Volume')}}: <text class="uni-bold m-l-10">{{detailInfo.unit_num}}</text></text>
-				<text class="font-size-normal item ">{{$t('Price Range')}}: <text class="uni-bold m-l-10">{{price_min + " - "}}{{price_max}}</text></text>
-			</view>
 			
 			<view class="label flex row m-t-50">
 				<view class="ic_mark"></view>
 				<text class="font-size-medium font-gray m-l-10 uni-bold">{{$t('Commission')}}</text>
 			</view>
-			<view class="flex column m-t-10 m-b-30">
-				<text class="font-size-normal item back-gray">{{$t('Commission')}}: <text class="uni-bold  m-l-10">{{Object.keys(detailInfo).length !== 0  && detailInfo.commission.value != null ? detailInfo.commission.value + '%' : ''}}</text></text>
-				<text class="font-size-normal item ">{{$t('GST')}}: <text class="uni-bold  m-l-10">{{Object.keys(detailInfo).length !== 0  && detailInfo.commission.gst != null ? detailInfo.commission.gst : ''}}</text></text>
-				<text class="font-size-normal item back-gray">{{$t('Schedule')}}: <text class="uni-bold  m-l-10">{{Object.keys(detailInfo).length !== 0  && detailInfo.commission.schedule != null ? detailInfo.commission.schedule : ''}}</text></text>
-				<text class="font-size-normal item">{{$t('Comment')}}: \n<text class="uni-bold">{{Object.keys(detailInfo).length !== 0 && detailInfo.commission.comment != null ? detailInfo.commission.comment : ''}}</text></text>
+			<view class="flex column m-t-10 ">
+				<text class="font-size-normal item back-gray">{{$t('Commission')}}: <text class="uni-bold  m-l-10">{{Object.keys(detailInfo).length !== 0  && detailInfo.order.commission.value != null ? comission_value : ''}}</text></text>
+				<text class="font-size-normal item ">{{$t('GST')}}: <text class="uni-bold  m-l-10">{{Object.keys(detailInfo).length !== 0  && detailInfo.order.commission.gst != null ? detailInfo.order.commission.gst : ''}}</text></text>
+				<text class="font-size-normal item back-gray">{{$t('Schedule')}}: <text class="uni-bold  m-l-10">{{Object.keys(detailInfo).length !== 0  && detailInfo.order.commission.schedule != null ? detailInfo.order.commission.schedule : ''}}</text></text>
+				<text class="font-size-normal item">{{$t('Comment')}}: \n<text class="uni-bold">{{Object.keys(detailInfo).length !== 0 && detailInfo.order.commission.comment != null ? detailInfo.order.commission.comment : ''}}</text></text>
 			</view>
 			
-			<view v-if="packageInfo != null" class="label flex row m-t-50">
+			<view v-if="packageInfo != null && packageInfo != '' && packageInfo[0] != undefined" class="label flex row m-t-50">
 				<view class="ic_mark"></view>
 				<text class="font-size-medium font-gray m-l-10 uni-bold">{{$t('Files Package')}}</text>
 			</view>
-			<view v-if="packageInfo != null" class="flex column m-t-10 m-b-30">
+			<view v-if="packageInfo != null && packageInfo != '' && packageInfo[0] != undefined" class="flex column m-t-10 ">
 				<view class="font-size-normal item back-gray flex column p-l-0">
-					<text class="font-size-normal item back-gray ">{{$t('DropBox')}}: </text>
-					<text class="font-size-normal item back-gray p-r-15 p-b-10 dropbox_txt" @click="copy(packageInfo[0].package_link)">{{packageInfo[0].package_link}}</text>
+					<text class="font-size-normal item back-gray ">{{this.language == "en" ? packageInfo[0].package_type_en : packageInfo[0].package_type }}: </text>
+					<text class="font-size-normal item back-gray p-r-15 p-b-10 dropbox_txt" @click="copy(packageInfo[0].package_link,'package')">{{packageInfo[0].package_link}}</text>
 				</view>
 				
 				<text class="font-size-normal item">{{$t('Comment')}}: \n<text class="uni-bold">{{packageInfo[0].package_comment != null ? packageInfo[0].package_comment : ''}}</text></text>
 				
 			</view>
 			
-			<view class="label flex row m-t-50 align-center">
+			<view v-if="detailInfo.file != undefined && detailInfo.file.contents.length > 0" class="label flex row m-t-50 align-center">
 				<view class="ic_mark"></view>
 				<view class="flex column">
 					<text class="font-size-medium font-gray m-l-10 uni-bold">{{$t('Files and Documents')}}</text>
@@ -57,8 +45,8 @@
 				</view>				
 			</view>
 			
-			<view class="m-t-10" style="margin-bottom:150px !important;">
-				<view v-for="(item,index) in detailInfo.file" class="file_item" :key="index">
+			<view v-if="detailInfo.file != undefined && detailInfo.file.contents.length > 0" class="m-t-10" style="margin-bottom:150px !important;">
+				<view v-for="(item,index) in detailInfo.file.contents" class="file_item" :key="index">
 					<view class="left flex row">
 						<view class="icon"><image src="/static/img/far fa-file-alt.png" mode="widthFix" style="width:32upx;"></image></view>
 						<view class="m-l-10" style="width:280upx;">
@@ -68,7 +56,7 @@
 					</view>
 					<view class="btn_group m-l-10 m-r-10">
 						<button class="btn" @click="download(item.url)">{{$t('Download')}}</button>
-						<button class="btn m-l-10" @click="copy(item.url)">{{$t('Copy')}}</button>
+						<button class="btn m-l-10" @click="copy(item.url,'file')">{{$t('Copy')}}</button>
 					</view>
 				</view>
 			</view>
@@ -104,12 +92,15 @@
 				comment:'',
 				attachList:[],
 				packageInfo : {},
+				language:"",
+				comission_value:0,
 			}
 		},
 		onLoad(option) {
 			this.hash = option.hash
+			this.language = uni.getStorageSync("language")
 			this.primaryImage = option.primaryImage
-			this.getDetail()
+			this.getAgentInfo()
 		},
 		onShow(){
 			uni.setNavigationBarTitle({// 修改头部标题
@@ -117,37 +108,36 @@
 			});
 		},
 		methods:{
-			getDetail(){
+			getAgentInfo(){
 				var that = this
 				showLoading(this.$t("Loading"))
+				console.log("house hash:" + this.hash);
 				uni.request({
-				    url: apiUrl.getPropertyDetail, //仅为示例，并非真实接口地址。
+				    url: apiUrl.getAgentInfo, //仅为示例，并非真实接口地址。
+					header: {
+						Authorization: "Bearer " + uni.getStorageSync("userInfo").authToken.token
+					},
 				    data: {
 				        token: uni.getStorageSync("token"),
+						scene:"app",
 						hash: this.hash
 				    },
 				    success: (res) => {
 						hideLoading()
 				        console.log(res.data);
 						if(res.data.code == 0){
-							this.detailInfo = res.data.data
-							if(uni.getStorageSync("language") == "en") {
-								
-								this.price_min = this.detailInfo.symbol + common.currency(this.detailInfo.price_min * 10000)
-								this.price_max = this.detailInfo.price_max == null ? '' :  this.detailInfo.symbol + common.currency(this.detailInfo.price_max * 10000)
-								// this.price_max = this.detailInfo.symbol + (this.detailInfo.price_max / 100).toFixed(3) + "M" 								
-								this.type = this.detailInfo.proptype_en
-							}
-							else {
-								this.price_min = this.detailInfo.symbol + common.currency(this.detailInfo.price_min * 10000)
-								this.price_max = this.detailInfo.price_max == null ? '' : this.detailInfo.symbol + common.currency(this.detailInfo.price_max * 10000)
-								// this.price_min = this.detailInfo.price_min + this.$t("Million")
-								// this.price_max = this.detailInfo.price_max + this.$t("Million")
-								this.type = this.detailInfo.proptype
-							}	
+							this.detailInfo = res.data.data							
 							
-							if(this.detailInfo.package != null) {
+							if(this.detailInfo.package != null && this.detailInfo.package != "") {
 								this.packageInfo = this.detailInfo.package
+								console.log("packageinfo : " + this.packageInfo)
+							}
+							
+							if(this.detailInfo.order.commission.type == "fixed") {
+								this.comission_value = '$' + common.currency(this.detailInfo.order.commission.value) 
+							} 
+							else {
+								this.comission_value = this.detailInfo.order.commission.value + '%'
 							}
 						}						
 						else {
@@ -194,13 +184,13 @@
 					}
 				})
 			},
-			copy(url){
+			copy(url,type){
 				console.log(url)
 				uni.setClipboardData({
 					data:url,//要被复制的内容
 					success:()=>{//复制成功的回调函数
 					  uni.showToast({//提示
-						title: this.$t('Copy Success')
+						title: type != "package" ? this.$t('Copy Success') : this.$t('Link Copied!')
 					  })
 					}
 				  });

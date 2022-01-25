@@ -385,9 +385,9 @@
 								that.company = userInfo.webportal.title
 							}
 														
-							that.agentName = userInfo.user.name
-							that.email = userInfo.user.email
-							that.phone = userInfo.user.mobile
+							that.agentName = userInfo.user_info.first_name + " " + userInfo.user_info.last_name
+							that.email = userInfo.user_info.email
+							that.phone = userInfo.user_info.mobile
 						}
 						else {
 							uni.showToast({

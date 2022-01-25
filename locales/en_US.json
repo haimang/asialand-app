@@ -1,7 +1,7 @@
 {
 	"Search Asialand Projects": "Search Asialand Projects",
 	"Featured Projects": "Featured Projects",
-	"Latest Market News": "Latest Market News",
+	"Latest Notifications": "Latest Notifications",
 	"Our Projects": "Current Listings",
 	"Address": "Address",
 	"Show more": "Show more",
@@ -306,5 +306,9 @@
 	"Back Page":"Back to previous page",
 	"403 No Authorization":"403 No Authorization",
 	"Files Package":"Files Package",
-	"Read all":"Read all"
+	"Read all":"Read all",
+	"Project information":"Project Details",
+	"Link Copied!":"Link Copied!",
+	"LOGIN_NOT_ATTEND_PORTAL":"You have not been assigned to any of our user group, please contact your channel manager to resolve this issue.",
+	"LOGIN_NOT_DOUBLE_ACTIVATED":"Asialand admin is processing your registration, please allow sometime for your account to get activated. Thank you for your patience."
 }

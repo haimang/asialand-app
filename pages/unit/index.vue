@@ -30,30 +30,29 @@
 					<view class="bar"></view>
 				</view>
 				<view class="flex row align-center">
-					<view class="circle_mark" :class="item.sales_status == '2' ? 'back_green' : item.sales_status == '3' ? 'back_yellow' : 'back_red'"></view>
-					<text class="uni-bold m-l-10" :class="item.sales_status == '2' ? 'col_green' : item.sales_status == '3' ? 'col_yellow' : 'col_red'">{{item.sales_status == '2' ? $t('Available') : item.sales_status == '3' ? $t('Reserved') : $t('Sold')}}</text>
+					<view class="circle_mark" :class="item.config.sales_status == '2' ? 'back_green' : item.config.sales_status == '3' ? 'back_yellow' : 'back_red'"></view>
+					<text class="uni-bold m-l-10" :class="item.config.sales_status == '2' ? 'col_green' : item.config.sales_status == '3' ? 'col_yellow' : 'col_red'">{{item.config.sales_status == '2' ? $t('Available') : item.config.sales_status == '3' ? $t('Reserved') : $t('Sold')}}</text>
 				</view>
 			</view>
 
 			<view class="w-100">
-				<image :src="item.floorplan + '/format/webp/quality/50'" style="float:left" class="plan m-r-10" mode="widthFix" />
+				<image :src="item.medias.image.url" style="float:left" class="plan m-r-10" mode="widthFix" />
 				<view class="flex column m-l-20">
 					<text class="font-size-normal font-gray">{{$t("Total Price")}}:<text class="uni-bold m-l-10">{{item.price_total}}</text></text>
-					<text class="font-size-normal uni-bold font-gray">{{item.spec_bed}}{{" " + $t("Bed")}} {{item.spec_bath}}{{" " + $t("Bath")}}{{" " + item.spec_car}}{{" " + $t("Car")}}
-					</text>
-					<view class="flex column flex-wrap">
-						<block v-if="item.prop_type == 1">
-							<view class="font-size-small font-gray  m-r-10">{{$t('Internal Size')}} : {{item.size_interior}}{{item.size_interior == null || item.size_interior == undefined || item.size_interior == '' ? '' : item.size_unit}}</view>
-							<view class="font-size-small font-gray">{{$t('External Size')}} : {{item.size_exterior}}{{item.size_exterior == null || item.size_exterior == undefined || item.size_exterior == '' ? '' : item.size_unit}}</view>							
-						</block>
-						<block v-if="item.prop_type == 2">
+					<text class="font-size-normal uni-bold font-gray">{{item.specs.bed != null && item.specs.bed != undefined && item.specs.bed != "" ? item.specs.bed + " " + $t("Bed") + " " : " "}}{{item.specs.bath != null && item.specs.bath != undefined && item.specs.bath != "" ? item.specs.bath + " " + $t("Bath") + " " : " "}}	{{item.specs.car != null && item.specs.car != undefined && item.specs.car != "" ? item.specs.car + " " + $t("Car") : ""}}</text>
+					<view class="flex row flex-wrap">
+						<!-- <block v-if="item.prop_type == 1"> -->
+							<view class="font-size-small font-gray  m-r-10">{{$t('Internal Size')}} : {{item.sizes.internal}}{{item.sizes.internal == null || item.sizes.internal == undefined || item.sizes.internal == '' ? '' : item.sizes.size_unit}}</view>
+							<view class="font-size-small font-gray">{{$t('External Size')}} : {{item.sizes.external}}{{item.sizes.external == null || item.sizes.external == undefined || item.sizes.external == '' ? '' : item.sizes.size_unit}}</view>							
+						<!-- </block> -->
+						<!-- <block v-if="item.prop_type == 2">
 							<view class="font-size-small font-gray m-r-10">{{$t('Land Size')}} : {{item.size_land}}{{item.size_land == null || item.size_land == undefined || item.size_land == '' ? '' : item.size_unit}}</view>
 							<view class="font-size-small font-gray  ">{{$t('House Size')}} : {{item.size_house_design}}{{item.size_unit}}</view>
 						</block>
 						<block v-if="item.prop_type == 3">
 							<view class="font-size-small font-gray m-r-10">{{$t('Land Size')}} : {{item.size_land}}{{item.size_land == null || item.size_land == undefined || item.size_land == '' ? '' : item.size_unit}}</view>
 							<view class="font-size-small font-gray  ">{{$t('House Size')}} : {{item.size_house_design}}{{item.size_unit}}</view>
-						</block>
+						</block> -->
 					</view>
 				</view>
 			</view>
@@ -112,17 +111,16 @@
 		onLoad(option) {
 			this.hash = option.hash
 			this.address = option.name
-			// this.hash = "HCPP-zxLfuXalzS"
-			this.getPropertyDetail()
+			//this.hash = "HCPP-REIwdTUyUU"
 			this.getUnitList()
 
 			this.bedPickArray.push(this.$t("ALL"))
 			if (uni.getStorageSync("language") == "en") {
-				for (var i = 1; i < 5; i++) {
+				for (var i = 1; i < 6; i++) {
 					this.bedPickArray.push(i + " " + this.$t("Bed"))
 				}
 			} else {
-				for (var i = 1; i < 5; i++) {
+				for (var i = 1; i < 6; i++) {
 					this.bedPickArray.push(i + " " + this.$t("Bed"))
 				}
 			}
@@ -150,7 +148,7 @@
 					this.showUnits = this.unitArray;
 				} else {
 					for (var i = 0; i < this.unitArray.length; i++) {
-						if (this.unitArray[i].spec_bed == this.bed.substring(0, 1)) {
+						if (this.unitArray[i].specs.bed == this.bed.substring(0, 1)) {
 							this.showUnits.push(this.unitArray[i])
 						}
 					}
@@ -168,40 +166,20 @@
 					url: "/pages/unit/detail?hash=" + hash
 				})
 			},
-			getPropertyDetail() {
-				var that = this
-				uni.request({
-					url: apiUrl.getPropertyDetail,
-					data: {
-						token: uni.getStorageSync("token"),
-						hash: this.hash
-					},
-					success: (res) => {
-						hideLoading()
-						console.log(res.data);
-						if (res.data.code == 0) {
-							that.address = res.data.data.address.address
-						} else {
-							uni.showToast({
-								icon: 'none',
-								title: res.data.message
-							});
-						}
-					}
-				});
-			},
 			getUnitList() {
 				showLoading(this.$t("Loading"))
 				uni.request({
-					url: apiUrl.getUnitList,
+					url: apiUrl.v2_getUnitList,
 					header: {
 						Authorization: "Bearer " + (uni.getStorageSync("isLogin") ? uni.getStorageSync("userInfo").authToken.token : '')
 					},
 					data: {
 						token: uni.getStorageSync("token"),
 						page: this.page,
-						pageSize: this.pageSize,
-						hash: this.hash
+						pagesize: this.pageSize,
+						hash: this.hash,
+						scene:"app",
+						is_all:"2,3"
 					},
 					success: (res) => {
 						console.log(res.data);
@@ -209,16 +187,17 @@
 						if (res.data.code == 0) {
 							this.unitArray = res.data.data.units
 							this.totalCnt = res.data.data.total
+							this.address = this.unitArray != null && this.unitArray.length > 0 ? this.unitArray[0].project_name_en : ""
 							for (var i = 0; i < this.unitArray.length; i++) {
 								if (uni.getStorageSync("language") == "en") {
-									this.unitArray[i].price_total = '$' + common.currency(this.unitArray[i].price_total);
+									this.unitArray[i].price_total = this.unitArray[i].price.symbol + common.currency(this.unitArray[i].price.price);
 									// this.unitArray[i].price_total = '$' + (this.unitArray[i].price_total.toFixed(2) + "").replace(
 									// 	/\d(?=(\d{3})+\.)/g, '$&,');
 									// this.unitArray[i].price_total = this.unitArray[i].price_total.substring(0, this.unitArray[i].price_total.indexOf(
 									// 	"."))
 									// this.unitArray[i].price_total = "$" + (this.unitArray[i].price_total / 1000).toFixed(2) + "K" 
 								} else {
-									this.unitArray[i].price_total = '$' + common.currency(this.unitArray[i].price_total);
+									this.unitArray[i].price_total = this.unitArray[i].price.symbol + common.currency(this.unitArray[i].price.price);
 									// this.unitArray[i].price_total = (this.unitArray[i].price_total / 10000).toFixed(2) + this.$t("Million")
 								}
 							}
@@ -229,6 +208,9 @@
 								icon: 'none',
 								title: res.data.message
 							});
+							if (res.data.message === "第三方授权登录失败或已过期") {
+								common.getThirdToken()
+							}
 						}
 					}
 				});

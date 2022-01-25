@@ -1,7 +1,7 @@
 {
 	"Search Asialand Projects": "搜索 Asialand 项目库",
 	"Featured Projects": "推荐项目",
-	"Latest Market News": "最新市场动态",
+	"Latest Notifications": "最新消息",
 	"Our Projects": "现有房源",
 	"Address": "地址",
 	"Show more": "查看更多",
@@ -311,5 +311,11 @@
 	"Back Page":"返回前一页",
 	"403 No Authorization":"403 未激活",
 	"Files Package":"文件包下载",
-	"Read all":"读取全部"
+	"Read all":"读取全部",
+	"Project information":"项目详情信息清单",
+	"Link Copied!":"链接已复制!",
+	"LOGIN_NOT_ATTEND_PORTAL":"您的账号尚未被指定用户组， 请联系您的渠道经理来解决这个问题。",
+	"LOGIN_NOT_DOUBLE_ACTIVATED":"您的账号正在等待管理员的审核。请给我们一些时间进行资料效验。感谢您的耐心"
+	
+
 }	

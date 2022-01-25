@@ -117,10 +117,10 @@
         <!-- 微信分享 配置begin -->
         <meta-data
             android:name="WX_SECRET"
-            android:value="fdc6251421d3d688a563b4f00dd540e7" />
+            android:value="75e5603ecda475a308ab2ac391c760c5" />
         <meta-data
             android:name="WX_APPID"
-            android:value="wx0411fa6a39d61297" />
+            android:value="wxb2a5804a19734b21" />
 
         <activity
             android:name=".wxapi.WXEntryActivity"
@@ -132,7 +132,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:scheme="wx0411fa6a39d61297" />
+                <data android:scheme="wxb2a5804a19734b21" />
             </intent-filter>
         </activity>
         <!-- 微信分享 配置 end -->

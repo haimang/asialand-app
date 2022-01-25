@@ -1,18 +1,18 @@
 <template>
 	<view class="product">
-		<view class="product-title">{{info.name}}</view>
-		<image class="product-image" mode="aspectFill" :src="info.images[0].url ? info.images[0].url: '/static/img/home1.png'"
+		<view class="product-title">{{info.project_name_en}}</view>
+		<image class="product-image" mode="aspectFill" :src="info.primary_image[0].medium + + '/format/webp/quality/50' ? info.primary_image[0].medium + '/format/webp/quality/50' : '/static/img/home1.png'"
 		 @click="gotoDetail"></image>
 		<view class="product-info flex row m-b-10">
 			<view class="product-info-view flex column m-t-10">
 				<view class="font-size-small ">
 					<text class="font-gray m-r-5" style="float:left;">{{$t('Address')}}:</text>
-					<text class="uni-bold m-l-5 line-one">{{info.address.address}}</text>
+					<text class="uni-bold m-l-5 line-one">{{info.location[1].address}}</text>
 				</view>
 				<view class="flex row font-size-small">
-					<text class="font-gray">{{$t('Starting from') == "起售价" ? info.prop_type : info.prop_type_en}} | </text>
+					<text class="font-gray">{{$t('Starting from') == "起售价" ? info.project_type_cn : info.project_type_en}} | </text>
 					<text class="font-gray m-l-10">{{$t('Starting from')}}:</text>
-					<text class="uni-bold m-l-5">{{$t('Starting from') == "起售价" ? price_cn : price_en}}</text>
+					<text class="uni-bold m-l-5" style="width:70px;">{{$t('Starting from') == "起售价" ? price_cn : price_en}}</text>
 				</view>
 			</view>
 			<view class="flex row product-btn">
@@ -26,26 +26,26 @@
 				<view class="flex row">
 					<!-- <image src="/static/img/mark.png" class="mark"></image> -->
 					<view class="ic_mark_small"></view>
-					<text class="m-l-10 uni-bold font-size-small">{{info.units.length}} {{$t('Featured Units')}}</text>
+					<text class="m-l-10 uni-bold font-size-small">{{info.unit.featured.length}} {{$t('Featured Units')}}</text>
 				</view>
 				<view class="flex row" @click="clickShowMore">
 					<text class="font-gray font-size-small">{{isShowMore ? $t('Collapse') : $t('Show more')}}</text>
 					<image :src="isShowMore ? '/static/img/arrow_up.png' : '/static/img/arrow_down.png'" class="arrow m-l-5"></image>
 				</view>
 			</view>
-			<view v-if="isShowMore && info.units != undefined" class="more_items">
-				<block v-for="(item, idx) in info.units" :key="idx">
+			<view v-if="isShowMore && info.unit != undefined && info.unit.featured != null" class="more_items">
+				<block v-for="(item, idx) in info.unit.featured" :key="idx">
 					<view class="flex row align-center m-t-20" @click="gotoUnitDetail(idx)">
 						<!-- <image src="/static/img/mark.png" class="mark"></image> -->
 						<view class="ic_mark_small"></view>
-						<image :src="item.floorplan" mode="aspectFill" class="img_plan"></image>
+						<image :src="item.medias.image.url" mode="aspectFill" class="img_plan"></image>
 						<view class="flex column">
 							<view class="flex row">
 								<text class="m-l-20 uni-bold font-size-small">{{item.unit_number}}</text>
-								<view class="unit_status_mark font-size-small">{{item.sales_status == 2 ? $t('Available unit') : item.sales_status == 3 ? $t('Booked') :  $t('Sold out')}}</view>
+								<view class="unit_status_mark font-size-small">{{item.config.sales_status == 2 ? $t('Available unit') : item.config.sales_status == 3 ? $t('Booked') :  $t('Sold out')}}</view>
 							</view>
 
-							<text class="m-l-20 font-size-small font-gray">{{item.spec_bed}}{{" " + $t('Bed')}} {{item.spec_bath}}{{" " + $t('Bath')}} {{" " + item.spec_car}}{{" " + $t('Car')}}</text>
+							<text class="m-l-20 font-size-small font-gray">{{item.specs != undefined && item.specs.bed != null && item.specs.bed != undefined ? item.specs.bed + " " + $t('Bed') : ''}} {{item.specs != undefined && item.specs.bath != null && item.specs.bath != undefined ? item.specs.bath + " " + $t('Bath'): ''}} {{item.specs != undefined && item.specs.car != undefined && item.specs.car != null ? item.specs.car + " " + $t('Car') : ""}}</text>
 						</view>
 					</view>
 				</block>
@@ -62,7 +62,7 @@
 	} from 'common/loading'
 
 	export default {
-		name: 'HouseItem',
+		name: 'HouseItemV2',
 		props: {
 			info: {
 				type: Object,
@@ -96,16 +96,16 @@
 			// 	this.price_en = this.info.symbol + this.info.price_min_k / 1000 + "M" 
 			// }
 
-			this.price_en = this.info.symbol + common.currency(this.info.price_min_k > 1000000 ? this.info.price_min_k : this.info.price_min_k + "000")
-			this.price_cn = this.info.symbol + common.currency(this.info.price_min_k > 1000000 ? this.info.price_min_k : this.info.price_min_k + "000")
+			this.price_en = this.info.price.symbol + common.currency(this.info.price.price_min)
+			this.price_cn = this.info.price.symbol + common.currency(this.info.price.price_min)
 
 			if (uni.getStorageSync("language") === "en") {
-				if (this.info.proptype_en != null && this.info.proptype_en != undefined) {
-					this.info.prop_type_en = this.info.proptype_en
+				if (this.info.project_type_en != null && this.info.project_type_en != undefined) {
+					this.info.project_type_en = this.info.project_type_en
 				}
 			} else {
-				if (this.info.proptype != null && this.info.proptype != undefined) {
-					this.info.prop_type = this.info.proptype
+				if (this.info.project_type_cn != null && this.info.project_type_cn != undefined) {
+					this.info.project_type_cn = this.info.project_type_cn
 				}
 			}
 		},
@@ -119,7 +119,7 @@
 			},
 			gotoDetail() {
 				uni.navigateTo({
-					url: '/pages/house/detail?hash=' + this.info.hash + "&name=" + this.info.name + "&price=" + (this.$t('Price') ==
+					url: '/pages/house/detail?hash=' + this.info.hash + "&name=" + this.info.project_name_en + "&price=" + (this.$t('Price') ==
 						"价格" ? this.price_cn : this.price_en)
 				})
 			},
@@ -138,7 +138,7 @@
 						})
 					} else {
 						uni.navigateTo({
-							url: "../unit/detail?hash=" + this.info.units[index].hash
+							url: "../unit/detail?hash=" + this.info.unit.featured[index].hash
 						})
 					}
 				}

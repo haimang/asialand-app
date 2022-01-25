@@ -55,7 +55,7 @@
 						<swiper class="img_swiper-box" @change="imgChange">
 							<swiper-item class="" v-for="(item, index) in detailInfo.images" :key="index">
 								<view class="flex column img_swiper_item">
-									<image class="house_img" mode="aspectFill" :src="item.url + '/format/webp/quality/50'" @click="previewPropertyImage"></image>
+									<image class="house_img" mode="aspectFill" :src="item.url " @click="previewPropertyImage"></image>
 								</view>
 							</swiper-item>
 						</swiper>
@@ -230,7 +230,7 @@
 								<view class="flex row  align-center space-between " @click="gotoUnitDetail(index)">
 									<view class="w-100 flex column">
 										<view class="w-100 flex row align-center">
-											<image :src="item.floorplan != null ? item.floorplan + '/format/webp/quality/50' : '/static/img/home_plan.png'" class="plan" />
+											<image :src="item.floorplan != null ? item.floorplan : '/static/img/home_plan.png'" class="plan" />
 											<view class="flex column m-l-20">
 												<view class="flex column m-b-10">
 													<view class="flex row align-center">
@@ -313,7 +313,7 @@
 			</view>
 		</block>
 		
-		<view class="agent-footer" v-if="isLogined && userType != 'client'">
+		<view class="agent-footer" v-if="isLogined">
 			<view class="agent flex row space-between">
 				<view class="flex column m-l-20" style="margin-top:-10px;" @click="gotoAgent">
 					<text class="font-size-medium uni-bold" style="line-height: 1.5;">{{$t("Agent's Package" )}}</text>
@@ -406,7 +406,7 @@
 		onLoad(option){
 			this.promotions = uni.getStorageSync("promotion")
 			this.isLogined = uni.getStorageSync("isLogin")
-			this.userType = uni.getStorageSync("userInfo").user.type
+			this.userType = uni.getStorageSync("userInfo").user_status[1].is_portal_user.role_type
 			
 			this.getSaveList()
 			this.getPropertyDetail(this.promotions[this.current].promotional_hcpp,this.current)
@@ -662,7 +662,7 @@
 				this.unitPos = e.detail.current
 			},
 			gotoAnalysis(){
-				if(uni.getStorageSync("userInfo").webportal.confirmed_status == 1 || uni.getStorageSync("userInfo").webportal.portal_type == "standard") {
+				if (uni.getStorageSync("userInfo").user_status[1].is_portal_user.is_double_activated != 2) {
 					uni.navigateTo({
 						url: "/pages/error/403"
 					})
@@ -679,8 +679,8 @@
 				})
 			},
 			gotoAgent(){
-				if(uni.getStorageSync("userInfo").webportal.confirmed_status == 1 || uni.getStorageSync("userInfo").webportal.portal_type == "standard") {
-					uni.navigateTo({
+if (uni.getStorageSync("userInfo").user_status[1].is_portal_user.is_double_activated != 2) {					
+				uni.navigateTo({
 						url: "/pages/error/403"
 					})
 				}
@@ -691,8 +691,7 @@
 				}
 			},
 			gotoUnit(){
-				if(uni.getStorageSync("userInfo").webportal.confirmed_status == 1 ||  uni.getStorageSync("userInfo").webportal.portal_type == "standard") {
-					uni.navigateTo({
+if (uni.getStorageSync("userInfo").user_status[1].is_portal_user.is_double_activated != 2) {					uni.navigateTo({
 						url: "/pages/error/403"
 					})
 				}
@@ -703,13 +702,12 @@
 				}
 			},
 			gotoUnitDetail(index){
-				if(uni.getStorageSync("userInfo").webportal.confirmed_status == 1 || uni.getStorageSync("userInfo").webportal.portal_type == "standard") {
-					uni.navigateTo({
+if (uni.getStorageSync("userInfo").user_status[1].is_portal_user.is_double_activated != 2) {					uni.navigateTo({
 						url: "/pages/error/403"
 					})
 				}
 				else {
-					if(this.isLogined && this.userType != 'client') {
+					if(this.isLogined) {   //3:普通成员
 						uni.navigateTo({
 							url:"/pages/unit/detail?hash=" + this.detailInfo.unit_featured[index].hash
 						})
@@ -719,7 +717,7 @@
 			dial(){
 				var userInfo = uni.getStorageSync('userInfo')
 				uni.makePhoneCall({
-				    phoneNumber: userInfo.user.mobile, 
+				    phoneNumber: userInfo.user_info.mobile, 
 					success: (res) => {
 						console.log('调用成功!')	
 					},
@@ -769,7 +767,7 @@
 					this.gotoLogin()
 				}
 				else {
-					var baseStr = "hash=" + this.detailInfo.hash + "&user_hash=" + uni.getStorageSync("userInfo").user.hash
+					var baseStr = "hash=" + this.detailInfo.hash + "&user_hash=" + uni.getStorageSync("userInfo").hash
 					var base64 = btoa(baseStr)
 					var base66 = "c" + base64.substring(0,5) + "t" + base64.substring(5)
 					
@@ -777,7 +775,7 @@
 					var desc = ""
 					
 					//不是公司成员
-					if(uni.getStorageSync("userInfo").user.company_portal_hash == null || uni.getStorageSync("userInfo").user.company_portal_hash == '') {
+					if (uni.getStorageSync("userInfo").user_status[1].is_portal_user.status == null || uni.getStorageSync("userInfo").user_status[1].is_portal_user.status == 0) {
 						desc = this.detailInfo.secondary_description
 						if(uni.getStorageSync("language") == 'en') {
 							title = this.detailInfo.proptype_en + ": " + this.detailInfo.name
@@ -789,11 +787,11 @@
 					else {  //公司成员
 						if(uni.getStorageSync("language") == 'en') {
 							title = this.detailInfo.proptype_en + ": " + this.detailInfo.name
-							desc = "Project shared by Asialand - " + uni.getStorageSync("userInfo").user.name + " " + uni.getStorageSync("userInfo").user.surname
+							desc = "Project shared by Asialand - " + uni.getStorageSync("userInfo").user_info.first_name + " " + uni.getStorageSync("userInfo").user_info.last_name
 						}
 						else {
 							title = this.detailInfo.proptype + ": " + this.detailInfo.name
-							desc = "由 Asialand - " + uni.getStorageSync("userInfo").user.surname + " " + uni.getStorageSync("userInfo").user.name + "为您分享"
+							desc = "由 Asialand - " + uni.getStorageSync("userInfo").user_info.first_name + " " + uni.getStorageSync("userInfo").user_info.last_name + "为您分享"
 							
 						}
 					}

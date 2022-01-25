@@ -24,7 +24,7 @@
 						<!-- <view class="ic_mark_small"></view> -->
 						<!-- <image class="mark" src="/static/img/mark.png" @click="gotoDetail"></image> -->
 						<view class="img">
-							<image class="img" :src="item.image != '' ? item.image + '/format/webp/quality/50' : '/static/img/ic_room_default.png'"></image>
+							<image class="img" :src="item.image != '' ? item.image  : '/static/img/ic_room_default.png'"></image>
 						</view>
 
 						<view class="item_content flex column m-l-10">
@@ -153,7 +153,8 @@
 					},
 					data: {
 						token: uni.getStorageSync("token"),
-						hashs: "all"
+						hashs: "all",
+						scene:"app"
 					},
 					success: (res) => {
 						uni.stopPullDownRefresh()

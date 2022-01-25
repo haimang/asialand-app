@@ -371,7 +371,8 @@
 	function getDetailInfo(token, hash){
 		$.ajax({
 			type: "get",
-			url: "https://dev.unifyestate.com/_api/properties/detail",
+			//url: "https://dev.unifyestate.com/_api/properties/detail",
+			url:'https://console.unifyestate.com/_api/v2/location/info'
 			data: {
 			    token: token,
 				hash: hash
@@ -381,9 +382,10 @@
 			success: function(data){
 				$("#loadingView").fadeOut()
 				if(data.code == 0){
+					console.log(data.data)
+					
 					if(data.data.nearby != "") {
-						nearByInfo = JSON.parse(data.data.nearby)
-						console.log(nearByInfo)
+						nearByInfo = JSON.parse(data.data)
 						$("#school_mark").css('visibility','visible');
 						changeTab(0)
 					}

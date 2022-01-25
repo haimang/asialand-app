@@ -31,7 +31,7 @@
 			</uni-swiper-dot> -->
 
 			<view class="flex column swiper_item align-center">
-				<image class="house_img" :src="detailInfo.floorplan + '/format/webp/quality/50'" @click="preview" mode="widthFix"></image>
+				<image class="house_img" :src="detailInfo.floorplan " @click="preview" mode="widthFix"></image>
 			</view>
 
 			<view class="label flex row m-t-30">
@@ -118,13 +118,15 @@
 				},
 				unitArray: [],
 				attachList: [],
-				propertyInfo: {}
+				propertyInfo: {},
+				userInfo:{}
 			}
 		},
 		onLoad(option) {
 			this.hash = option.hash
 			// this.hash = "HCPU-OZ8Icty8dc"
 			this.getDetail()
+			this.getUserInfo()
 		},
 		onShow() {
 			uni.setNavigationBarTitle({ // 修改头部标题
@@ -134,7 +136,7 @@
 		methods: {
 			preview() {
 				let imgsArray = []
-				imgsArray.push(this.detailInfo.floorplan)
+				imgsArray.push(this.detailInfo.floorplan.replace("720x","1650x"))
 				uni.previewImage({
 					urls: imgsArray
 				});
@@ -142,32 +144,50 @@
 			change(e) {
 				this.current = e.detail.current;
 			},
+			getUserInfo() {			
+				var that = this
+				uni.request({
+					url: apiUrl.v2_getUserInfo, //仅为示例，并非真实接口地址。
+					header: {
+						Authorization: "Bearer " + uni.getStorageSync("userInfo").authToken.token
+					},
+					data: {
+						token: uni.getStorageSync("token"),
+						scene:"app"			
+					},
+					success: (res) => {
+						console.log(res.data);
+						hideLoading()
+						if (res.data.code == 0) {
+							that.userInfo = res.data.data
+							
+						}
+					}
+				});
+			},
 			gotoReserve() {
-				if (uni.getStorageSync("userInfo") == undefined || uni.getStorageSync("userInfo") == null || uni.getStorageSync(
-						"userInfo") == "") {
+				if (this.userInfo == undefined || this.userInfo == null || this.userInfo == "") {
 					uni.navigateTo({
 						url: "/pages/login/login"
 					})
 				} else {
-					var userInfo = uni.getStorageSync("userInfo")
-					if (userInfo.webportal == null || userInfo.webportal == undefined) {
+					if (this.userInfo.portal_info == null || this.userInfo.portal_info == undefined) {
 						uni.navigateTo({
 							url: "/pages/login/login"
 						})
 					} else {
-						if (userInfo.webportal.confirmed_status == 2 && userInfo.webportal.protal_type != "company" && userInfo.webportal
-							.portal_user_type != 1) {
+						if (this.userInfo.portal_info.is_double_activated == 2 && this.userInfo.portal_info.is_company != 1 && this.userInfo.portal_info.role_type != 1) {
 							uni.navigateTo({
 								url: "/pages/unit/reserve?hash=" + this.hash
 							})
 						} else {
-							if (userInfo.webportal.confirmed_status == 1) {
+							if (this.userInfo.portal_info.is_double_activated == 1) {
 								uni.showToast({
 									icon: 'none',
 									title: this.$t("If you want reserve unit, please verify your account first"),
 									duration: 5000
 								})
-							} else if (userInfo.webportal.portal_user_type == 1 || userInfo.webportal.protal_type == "company") {
+							} else if (this.userInfo.portal_info.role_type == 1 || this.userInfo.portal_info.attribute_en == "Internal") {
 								uni.showToast({
 									icon: 'none',
 									title: this.$t("You can't reserve unit"),
@@ -289,7 +309,7 @@
 					this.gotoLogin()
 				} else {
 					// 分享图文到微信聊天界面
-					var baseStr = "hash=" + this.detailInfo.property_hash + "&user_hash=" + uni.getStorageSync("userInfo").user.hash +
+					var baseStr = "hash=" + this.detailInfo.property_hash + "&user_hash=" + this.userInfo.hash +
 						"&timestamp=" + Date.now() + "&unit=" + this.detailInfo.hash
 					var base64 = btoa(baseStr)
 					var base66 = "c" + base64.substring(0, 5) + "t" + base64.substring(5)
@@ -298,8 +318,7 @@
 					var desc = ""
 
 					//不是公司成员
-					if (uni.getStorageSync("userInfo").user.company_portal_hash == null || uni.getStorageSync("userInfo").user.company_portal_hash ==
-						'') {
+					if (this.userInfo.portal_info.hash == null || this.userInfo.portal_info.hash =='') {
 						desc = this.propertyInfo.secondary_description
 						if (uni.getStorageSync("language") == 'en') {
 							title = this.propertyInfo.name + " - " + this.detailInfo.unit_number
@@ -309,12 +328,10 @@
 					} else { //公司成员
 						if (uni.getStorageSync("language") == 'en') {
 							title = this.propertyInfo.name + " - " + this.detailInfo.unit_number
-							desc = "Project shared by Asialand - " + uni.getStorageSync("userInfo").user.name + " " + uni.getStorageSync(
-								"userInfo").user.surname
+							desc = "Project shared by Asialand - " + this.userInfo.user_info.name.first_name + " " + this.userInfo.user_info.name.last_name
 						} else {
 							title = this.propertyInfo.name + " - " + "户型推荐: " + this.detailInfo.unit_number
-							desc = "由 Asialand - " + uni.getStorageSync("userInfo").user.surname + " " + uni.getStorageSync("userInfo").user
-								.name + "为您分享"
+							desc = "由 Asialand - " + this.userInfo.user_info.name.first_name + " " + this.userInfo.user_info.name.last_name + "为您分享"
 
 						}
 					}

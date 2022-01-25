@@ -14,7 +14,7 @@
 			<scroll-view class="scroll-v list" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
 				<view class="m-t-20 w-100">
 					<view class="m-t-20" v-for="(item, idx) in houseList" :key="idx">
-						<house-item class="m-t-20" :info="item" :isSaved.sync="item.isSaved" @saveClick="saveProperty"></house-item>
+						<house-item-v2 class="m-t-20" :info="item" :isSaved.sync="item.isSaved" @saveClick="saveProperty"></house-item-v2>
 					</view>
 				</view>
 				<view class="loading-more m-t-5" v-if="isLoading">
@@ -38,6 +38,8 @@
 	} from 'common/loading'
 	
 	import HouseItem from '../../components/house-item.vue'
+	import HouseItemV2 from '../../components/house-item-v2.vue'
+	
 	export default {
 		data() {
 			return {
@@ -57,7 +59,8 @@
 			}
 		},
 		components:{
-			HouseItem
+			HouseItem,
+			HouseItemV2
 		},
 		onShow(){
 			uni.setNavigationBarTitle({// 修改头部标题
@@ -155,17 +158,18 @@
 				showLoading()
 				var that = this
 				uni.request({
-					url: apiUrl.getPropertyList, //仅为示例，并非真实接口地址。
+					url: apiUrl.v2_getPropertyList, //仅为示例，并非真实接口地址。
 					data: {
 						token: uni.getStorageSync("token"),
 						page: this.page,
-						pageSize: this.pageSize,						
-						prop_type:this.type,
+						pagesize: this.pageSize,						
+						property_type:this.type,
 						price:this.rangeMin + "-" + this.rangeMax,
 						keyword:this.keyword,
 						country: "1",
-						unit_is_recommended:"1",
-						status:this.status
+						scene:"app",
+						show_recommended_units:"1",
+						progress_status:this.status
 					},
 					success: (res) => {
 						uni.stopPullDownRefresh()

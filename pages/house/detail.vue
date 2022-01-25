@@ -3,7 +3,7 @@
 		<view class="w-100 ">
 			<view class="header flex row space-between m-b-30" :style="showSkeleton ? 'height:120px' : 'height:auto'">
 				<view class="left flex column m-l-15" style="width:600upx">
-					<text class="font-size-big uni-bold m-t-10 ">{{detailInfo.name == undefined ? '' : detailInfo.name}}</text>
+					<text class="font-size-big uni-bold m-t-10 ">{{v2DetailInfo == undefined || v2DetailInfo.project_name_en == undefined ? '' : v2DetailInfo.project_name_en}}</text>
 					<text class="font-size-normal  m-b-20 ">{{$t('Starting from')}}: <text class="uni-bold m-l-5">{{price}}</text></text>
 					<view class="flex row flex-wrap ">
 						<block v-if="isEnglish">
@@ -38,25 +38,26 @@
 
 			<view style="background:white;" class="skeleton">
 				<skeleton selector="skeleton" ref="skeleton" bgcolor="transparent" v-if="showSkeleton"></skeleton>
-
-				<view class="w-100 skeleton-rect" style="height: 530upx;">
-					<uni-swiper-dot v-if="detailInfo.images != undefined && detailInfo.images.length > 0" class="swiper m-t-0" :info="detailInfo.images"
+				
+				<view class="w-100 skeleton-rect" style="height: 530upx;" >
+					<uni-swiper-dot v-if="v2DetailInfo.image != undefined && v2DetailInfo.image.contents != undefined && v2DetailInfo.image.contents.length > 0" class="swiper m-t-0" :info="v2DetailInfo.image.contents"
 					 :dots-styles="dotsStyles" :current="current" :mode="mode">
 						<swiper class="swiper-box" @change="change">
-							<swiper-item class="" v-for="(item, index) in detailInfo.images" :key="index">
+							<swiper-item class="" v-for="(item, index) in v2DetailInfo.image.contents" :key="index">
 								<view class="flex column swiper_item">
-									<image class="house_img" mode="aspectFill" :src="item.url + '/format/webp/quality/50'" @click="previewPropertyImage"></image>
+									<image class="house_img" mode="aspectFill" :src="v2DetailInfo.image.properties.cos_prefix + item.relative_url + v2DetailInfo.image.properties.ci_surfix + v2DetailInfo.image.properties.ci_medium + v2DetailInfo.image.properties.ci_quality" @click="previewPropertyImage"></image>
 								</view>
 							</swiper-item>
 						</swiper>
 					</uni-swiper-dot>
-					<text v-if="detailInfo.images != undefined && detailInfo.images.length > 0" class="swiper-pos">{{current + 1}}/{{detailInfo.images.length}}</text>
+					<text v-if="v2DetailInfo.image != undefined && v2DetailInfo.image.contents != undefined && v2DetailInfo.image.contents.length > 0" class="swiper-pos">{{current + 1}}/{{v2DetailInfo.image.contents.length}}</text>
 				</view>
-
+				
 				<view class="p-l-15 p-r-15" style="box-sizing: border-box;">
+					
 					<view class="summary top_label flex row space-between align-center m-t-30" style="height:80upx">
 						<text>{{$t('Project Summary')}}</text>
-						<view class=" flex row align-center" v-if="detailInfo.video != '' && detailInfo.video != undefined" @click="playVideo">
+						<view class=" flex row align-center" v-if="v2DetailInfo.video != undefined && v2DetailInfo.video.contents != '' && v2DetailInfo.video.contents != undefined && v2DetailInfo.video.contents.length > 0" @click="playVideo">
 							<image class="icon" :src="isPlayVideo ? '/static/img/play_icon.png' : '/static/img/stop_icon.png'" />
 							<text class="font-size-small">{{isPlayVideo ? $t('Play Video') : $t('Stop Video')}}</text>
 						</view>
@@ -65,32 +66,54 @@
 					<view v-if="!isPlayVideo" class="video m-t-10">
 						<video class="w-100" autoplay="true" :src="videoUrl" @error="videoErrorCallback" controls></video>
 					</view>
+						
+					<block v-if="v2DetailInfo != undefined">
+						<view class="flex row m-t-20" v-if='$t("Price") == "价格"'>
+							<view v-if="isEnglish" class="flex row align-center translate-btn" @click="changeTranslate(0)">
+								<image class="translate-icon m-l-10" src="/static/img/ic_eng_chi.png"></image>
+								<text class="font-size-normal m-l-10 m-r-10">{{$t("englishToChinese")}}</text>
+							</view>
 
-					<view class="flex row m-t-20" v-if='$t("Price") == "价格"'>
-						<view v-if="isEnglish" class="flex row align-center translate-btn" @click="changeTranslate(0)">
-							<image class="translate-icon m-l-10" src="/static/img/ic_eng_chi.png"></image>
-							<text class="font-size-normal m-l-10 m-r-10">{{$t("englishToChinese")}}</text>
+							<view v-if="!isEnglish" class="flex row align-center translate-btn-active" @click="changeTranslate(1)">
+								<image class="translate-icon m-l-10" src="/static/img/ic_eng_chi.png"></image>
+								<text class="font-size-normal m-l-10 m-r-10">{{$t("chineseToEnglish")}}</text>
+							</view>
+
+							<view class="flex row copy_clipboard align-center m-l-10" @click="copyDes()">
+								<image class="copy-icon m-l-10" src="/static/img/copy_icon.png"></image>
+								<text class="font-size-normal m-l-10 m-r-10">{{$t("CopyText")}}</text>
+							</view>
 						</view>
 
-						<view v-if="!isEnglish" class="flex row align-center translate-btn-active" @click="changeTranslate(1)">
-							<image class="translate-icon m-l-10" src="/static/img/ic_eng_chi.png"></image>
-							<text class="font-size-normal m-l-10 m-r-10">{{$t("chineseToEnglish")}}</text>
+						<view class="flex column m-t-20 desc skeleton-rect" style="min-height: 330upx;">
+							<text class="font-size-normal uni-bold">{{isEnglish ? (v2DetailInfo.descriptions == undefined ? '' : v2DetailInfo.descriptions.secondary_des_en) : secDesCn}}</text>
+							<!-- <rich-text class="font-size-normal m-t-10" :nodes="detailInfo.description == undefined ? '' : detailInfo.description"></rich-text> -->
+							<text class="font-size-normal m-t-10" :class="!isReadAll ? 'elllipse' : ''">
+								{{isEnglish ? (v2DetailInfo.descriptions == undefined ? '' : v2DetailInfo.descriptions.full_des_en) : desCn}}
+							</text>
 						</view>
-
-						<view class="flex row copy_clipboard align-center m-l-10" @click="copyDes()">
-							<image class="copy-icon m-l-10" src="/static/img/copy_icon.png"></image>
-							<text class="font-size-normal m-l-10 m-r-10">{{$t("CopyText")}}</text>
+					</block>
+					<block v-if="v2DetailInfo.descriptions != '' && v2DetailInfo.descriptions != undefined">
+						<view class="font-size-normal uni-bold btn-read-more m-t-15 m-b-10" @click="showAllDesc">{{$t("read more")}}</view>
+					</block>
+					
+					<view class="top_label flex row m-t-50">
+						<view class="column flex flex-start " style="align-items: flex-start !important;">
+							<view class="flex row align-center">
+								<text class="line-height-1 uni-bold font-size-medium">{{$t('Project information')}}</text>
+							</view>
 						</view>
 					</view>
-
-					<view class="flex column m-t-20 desc skeleton-rect" style="min-height: 330upx;">
-						<text class="font-size-normal uni-bold">{{isEnglish ? (detailInfo.secondary_description == undefined ? '' : detailInfo.secondary_description) : secDesCn}}</text>
-						<!-- <rich-text class="font-size-normal m-t-10" :nodes="detailInfo.description == undefined ? '' : detailInfo.description"></rich-text> -->
-						<text class="font-size-normal m-t-10" :class="!isReadAll ? 'elllipse' : ''">
-							{{isEnglish ? (detailInfo.description == undefined ? '' : detailInfo.description) : desCn}}
-						</text>
-					</view>
-					<view class="font-size-normal uni-bold btn-read-more m-t-15 m-b-10" @click="showAllDesc">{{$t("read more")}}</view>
+					<block v-if="v2DetailInfo != undefined">					
+						<view class="flex column m-t-10 " v-if="v2DetailInfo != undefined">
+							<text class="font-size-normal item">{{$t('Project Type')}}: <text class="uni-bold m-l-10">{{type}}</text></text>
+							<text class="font-size-normal item back-gray">{{$t('Location')}}: <text class="uni-bold  m-l-10">{{ v2DetailInfo.location != undefined ? v2DetailInfo.location[1].address : ""}}</text></text>
+			<!--			<text class="font-size-normal item">{{$t('Developer')}}: <text class="uni-bold m-l-10">{{detailInfo.developer}}</text></text>-->
+							<text class="font-size-normal item ">{{$t('Completion')}}: <text class="uni-bold m-l-10">{{v2DetailInfo.factsheet != undefined ? v2DetailInfo.factsheet.date_construct : ""}}</text></text>
+							<text class="font-size-normal item back-gray">{{$t('Total Volume')}}: <text class="uni-bold m-l-10">{{v2DetailInfo.unit != undefined ?  v2DetailInfo.unit.total_number : ""}}</text></text>
+							<text class="font-size-normal item ">{{$t('Price Range')}}: <text class="uni-bold m-l-10">{{price_min + " - "}}{{price_max}}</text></text>
+						</view>
+					</block>
 					<view class="top_label flex row m-t-50">
 						<view class="column flex flex-start " style="align-items: flex-start !important;">
 							<view class="flex row align-center">
@@ -105,56 +128,56 @@
 						<image mode="widthFix" class="m-l-5 m-r-5" style="width:20px;" src="../../static/img/arrow_cursor_left.png"></image>
 
 						<swiper class="unit_swiper_item unit-swiper m-t-0 " style="height:280upx;" :current="unitPos" @change="unitChange">
-							<block v-if="detailInfo.unit_featured != undefined && detailInfo.unit_featured.length > 0">
-								<swiper-item v-for="(item,index) in detailInfo.unit_featured" :key="index">
+							<block v-if="v2DetailInfo.unit != undefined && v2DetailInfo.unit.featured.length > 0">
+								<swiper-item v-for="(item,index) in v2DetailInfo.unit.featured" :key="index">
 									<view class="flex row  align-center space-between " @click="gotoUnitDetail(index)">
 										<view class="w-100 flex column">
 											<view class="w-100 flex row align-center">
-												<image :src="item.floorplan != null ? item.floorplan + '/format/webp/quality/50' : '/static/img/home_plan.png'"
+												<image :src="item.medias.image.url != null && item.medias.image.url != '' ? item.medias.image.url : '/static/img/home_plan.png'"
 												 class="plan" />
 												<view class="flex column m-l-20">
 													<view class="flex column m-b-10">
 														<view class="flex row align-center">
 															<text class="uni-bold font-gray line-one">{{item.unit_number}}</text>
-															<view class="unit_status_mark font-size-small">{{item.sales_status == 2 ? $t('Available unit') : item.sales_status == 3 ? $t('Booked') :  $t('Sold out')}}</view>
+															<view class="unit_status_mark font-size-small">{{item.config.sales_status == 2 ? $t('Available unit') : item.config.sales_status == 3 ? $t('Booked') :  $t('Sold out')}}</view>
 														</view>
 														<view class="bar"></view>
 													</view>
-													<view class="font-size-normal font-gray">{{$t("Price")}}: <text class="uni-bold">{{" " + item.price_total}}</text></view>
+													<view class="font-size-normal font-gray">{{$t("Price")}}: <text class="uni-bold">{{" " + item.price.symbol + item.price.price}}</text></view>
 													<view class="flex row ">
-														<view class="font-size-normal uni-bold font-gray m-r-10" v-if="item.spec_bed != 0">{{item.spec_bed}}{{" " + $t("Bed")}}</view>
-														<view class="font-size-normal uni-bold font-gray m-r-10" v-if="item.spec_bath != 0">{{item.spec_bath}}{{" " + $t("Bath")}}</view>
-														<view class="font-size-normal uni-bold font-gray " v-if="item.spec_car != 0">{{item.spec_car}}{{" " + $t("Car")}}</view>
+														<view class="font-size-normal uni-bold font-gray m-r-10" v-if="item.specs.bed != 0">{{item.specs.bed}}{{" " + $t("Bed")}}</view>
+														<view class="font-size-normal uni-bold font-gray m-r-10" v-if="item.specs.bath != 0">{{item.specs.bath}}{{" " + $t("Bath")}}</view>
+														<view class="font-size-normal uni-bold font-gray " v-if="item.specs.car != 0">{{item.specs.car}}{{" " + $t("Car")}}</view>
 													</view>
 												</view>
 											</view>
 											<view class="split m-t-15 m-b-15"></view>
 											<view class="flex row">
-												<block v-if="item.prop_type==1">
-													<view class="font-size-small font-gray flex row" v-if="item.size_interior != null && item.size_interior != 0 && item.size_interior != ''">
+												<block v-if="item.property_type==1">
+													<view class="font-size-small font-gray flex row" v-if="item.sizes.internal != null && item.sizes.internal != 0 && item.sizes.internal != ''">
 														<view class="font-size-small">{{$t('Internal Size')}} :</view>
-														<view class="font-size-small uni-bold m-l-5">{{item.size_interior}}{{item.size_unit}}</view>
+														<view class="font-size-small uni-bold m-l-5">{{item.sizes.internal}}{{item.sizes.size_unit}}</view>
 													</view>
-													<view class="font-size-small font-gray flex row m-l-10" v-if="item.size_exterior != null && item.size_exterior != 0 && item.size_exterior != ''">
-														<view class="font-size-small">{{$t('External Size')}} :<text class="font-size-small uni-bold m-l-5">{{item.size_exterior}}{{item.size_unit}}</text></view>
-													</view>
-												</block>
-												<block v-if="item.prop_type==2">
-													<view class="font-size-small font-gray flex row" v-if="item.size_land != null && item.size_land != 0 && item.size_land != ''">
-														<view class="font-size-small">{{$t('Land Size')}} :<text class="font-size-small uni-bold m-l-5">{{item.size_land}}{{item.size_unit}}</text></view>
-													</view>
-													<view class="font-size-small font-gray m-l-10 flex row" v-if="item.size_house_design != null && item.size_house_design != 0 && item.size_house_design != ''">
-														<view class="font-size-small">{{$t('House Size')}} :</view>
-														<view class="font-size-small uni-bold m-l-5">{{item.size_house_design}}{{item.size_unit}}</view>
+													<view class="font-size-small font-gray flex row m-l-10" v-if="item.sizes.external != null && item.sizes.external != 0 && item.sizes.external != ''">
+														<view class="font-size-small">{{$t('External Size')}} :<text class="font-size-small uni-bold m-l-5">{{item.sizes.external}}{{item.sizes.size_unit}}</text></view>
 													</view>
 												</block>
-												<block v-if="item.prop_type==3">
-													<view class="font-size-small font-gray flex row" v-if="item.size_land != null && item.size_land != 0 && item.size_land != ''">
-														<view class="font-size-small">{{$t('Land Size')}} :<text class="font-size-small uni-bold m-l-5">{{item.size_land}}{{item.size_unit}}</text></view>
+												<block v-if="item.property_type==2">
+													<view class="font-size-small font-gray flex row" v-if="item.sizes.external != null && item.sizes.external != 0 && item.sizes.external != ''">
+														<view class="font-size-small">{{$t('Land Size')}} :<text class="font-size-small uni-bold m-l-5">{{item.sizes.external}}{{item.sizes.size_unit}}</text></view>
 													</view>
-													<view class="font-size-small font-gray m-l-10 flex row" v-if="item.size_house_design != null && item.size_house_design != 0 && item.size_house_design != ''">
+													<view class="font-size-small font-gray m-l-10 flex row" v-if="item.sizes.internal != null && item.sizes.internal != 0 && item.sizes.internal != ''">
 														<view class="font-size-small">{{$t('House Size')}} :</view>
-														<view class="font-size-small uni-bold m-l-5">{{item.size_house_design}}{{item.size_unit}}</view>
+														<view class="font-size-small uni-bold m-l-5">{{item.sizes.internal}}{{item.sizes.size_unit}}</view>
+													</view>
+												</block>
+												<block v-if="item.property_type==3">
+													<view class="font-size-small font-gray flex row" v-if="item.sizes.external != null && item.sizes.external != 0 && item.sizes.external != ''">
+														<view class="font-size-small">{{$t('Land Size')}} :<text class="font-size-small uni-bold m-l-5">{{item.sizes.external}}{{item.sizes.size_unit}}</text></view>
+													</view>
+													<view class="font-size-small font-gray m-l-10 flex row" v-if="item.sizes.internal != null && item.sizes.internal != 0 && item.sizes.internal != ''">
+														<view class="font-size-small">{{$t('House Size')}} :</view>
+														<view class="font-size-small uni-bold m-l-5">{{item.sizes.internal}}{{item.sizes.size_unit}}</view>
 													</view>
 												</block>
 											</view>
@@ -173,40 +196,40 @@
 
 					</view>
 					<view class="map m-t-15 flex column skeleton-rect" style="height:380upx;" @tap="gotoMap">
-						<block v-if="detailInfo.address != undefined">
-							<image class="w-100 map_img" :src="'https://image.maps.api.here.com/mia/1.6/mapview?app_id=rLH3gcQKZ8FDUWfBfckJ&app_code=CWWgJNAXJhCrQcLm4rsUWg&lat=' + detailInfo.address.lat + '&lon=' + detailInfo.address.lng + '&vt=0&z=14&w=700&h=400'"></image>
+						<block v-if="v2DetailInfo.location != undefined && v2DetailInfo.location[1].address != undefined">
+							<image class="w-100 map_img" :src="'https://image.maps.api.here.com/mia/1.6/mapview?app_id=rLH3gcQKZ8FDUWfBfckJ&app_code=CWWgJNAXJhCrQcLm4rsUWg&lat=' + v2DetailInfo.location[1].lat + '&lon=' + v2DetailInfo.location[1].lon + '&vt=0&z=14&w=700&h=400'"></image>
 							<image class="map_mark" mode="widthFix" src="/static/img/map_mark.png"></image>
-							<cover-view class="cover line-one">{{detailInfo.address.address}}</cover-view>
+							<cover-view class="cover line-one">{{v2DetailInfo.location[1].address}}</cover-view>
 						</block>
 					</view>
-
-					<view class="top_label m-t-50 column flex flex-start" style="align-items: flex-start !important;">
+					
+					<view v-if="v2DetailInfo.relate_hashes != undefined && v2DetailInfo.relate_hashes.education != null" class="top_label m-t-50 column flex flex-start" style="align-items: flex-start !important;">
 						<text>{{$t('Education')}}</text>
 						<text class="font-size-small font-normal m-t-5">{{$t('Swipe left and right to view more details')}}</text>
 					</view>
-					<view class="education m-l-5 m-t-15 skeleton-rect" style="height:500upx">
-						<view class="header flex row" v-if="detailInfo != null && detailInfo.school != null">
-							<view class="item " @click="schoolPos=0" v-if="detailInfo.school.Primary != null && detailInfo.school.Primary.length > 0">
+					<view v-if="v2DetailInfo.relate_hashes != undefined && v2DetailInfo.relate_hashes.education != null" class="education m-l-5 m-t-15 skeleton-rect" style="height:500upx">
+						<view class="header flex row" v-if="educationInfo != null ">
+							<view class="item " @click="schoolPos=0" v-if="educationInfo.Primary != null && educationInfo.Primary.length > 0">
 								<text :class="schoolPos == 0? 'uni-bold font-gray line-one' : 'font-small font-gray line-one'">{{$t('Primary')}}</text>
 								<view v-if="schoolPos ==0" class="bar"></view>
 							</view>
-							<view class="item m-l-20" @click="schoolPos=1" v-if="detailInfo.school.Secondary != null && detailInfo.school.Secondary.length > 0">
+							<view class="item" @click="schoolPos=1" v-if="educationInfo.Secondary != null && educationInfo.Secondary.length > 0">
 								<text :class="schoolPos == 1? 'uni-bold font-gray line-one' : 'font-small font-gray line-one' ">{{$t('Secondary')}}</text>
 								<view v-if="schoolPos ==1" class="bar"></view>
 							</view>
-							<view class="item m-l-20" @click="schoolPos=2" v-if="detailInfo.school.Combined != null && detailInfo.school.Combined.length > 0">
+							<view class="item" @click="schoolPos=2" v-if="educationInfo.Combined != null && educationInfo.Combined.length > 0">
 								<text :class="schoolPos == 2? 'uni-bold font-gray line-one' : 'font-small font-gray line-one' ">{{$t('Combined')}}</text>
 								<view v-if="schoolPos == 2" class="bar"></view>
 							</view>
-							<view class="item m-l-20" @click="schoolPos=3" v-if="detailInfo.school.Special != null && detailInfo.school.Special.length > 0">
+							<view class="item" @click="schoolPos=3" v-if="educationInfo.Special != null && educationInfo.Special.length > 0">
 								<text :class="schoolPos == 3? 'uni-bold font-gray line-one' : 'font-small font-gray line-one' ">{{$t('Special')}}</text>
 								<view v-if="schoolPos == 3" class="bar"></view>
 							</view>
 						</view>
-						<swiper v-if="detailInfo.school != undefined" class="school-swiper m-t-0" :current="schoolPos" @change="schoolChange">
+						<swiper v-if="educationInfo != undefined" class="school-swiper m-t-0" :current="schoolPos" @change="schoolChange">
 							<swiper-item>
-								<scroll-view scroll-y="true" v-if="detailInfo.school.Primary != undefined" :style="detailInfo.school.Primary.length > 5 ? 'height:450upx' : 'height:' + detailInfo.school.Primary.length * 100 + 'upx'">
-									<block v-for="(item,index) in detailInfo.school.Primary" :key="index">
+								<scroll-view scroll-y="true" v-if="educationInfo.Primary != undefined" :style="educationInfo.Primary .length > 5 ? 'height:450upx' : 'height:' + educationInfo.Primary .length * 100 + 'upx'">
+									<block v-for="(item,index) in educationInfo.Primary" :key="index">
 										<view class="flex row swiper_item align-center space-between m-t-10">
 											<view class="flex row align-center">
 												<view class="ic_mark_small"></view>
@@ -221,8 +244,8 @@
 								</scroll-view>
 							</swiper-item>
 							<swiper-item>
-								<scroll-view scroll-y="true" v-if="detailInfo.school.Secondary != undefined" :style="detailInfo.school.Secondary.length > 5 ? 'height:450upx' : 'height:' + detailInfo.school.Secondary.length * 100 + 'upx'">
-									<block v-for="(item,index) in detailInfo.school.Secondary" :key="index">
+								<scroll-view scroll-y="true" v-if="educationInfo.Secondary != undefined" :style="educationInfo.Secondary.length > 5 ? 'height:450upx' : 'height:' + educationInfo.Secondary.length * 100 + 'upx'">
+									<block v-for="(item,index) in educationInfo.Secondary" :key="index">
 										<view class="flex row swiper_item align-center space-between m-t-10">
 											<view class="flex row align-center">
 												<view class="ic_mark_small"></view>
@@ -237,8 +260,8 @@
 								</scroll-view>
 							</swiper-item>
 							<swiper-item>
-								<scroll-view scroll-y="true" v-if="detailInfo.school.Combined != undefined" :style="detailInfo.school.Combined.length > 5 ? 'height:450upx' : 'height:' + detailInfo.school.Combined.length * 100 + 'upx'">
-									<block v-for="(item,index) in detailInfo.school.Combined" :key="index">
+								<scroll-view scroll-y="true" v-if="educationInfo.Combined != undefined" :style="educationInfo.Combined.length > 5 ? 'height:450upx' : 'height:' + educationInfo.Combined.length * 100 + 'upx'">
+									<block v-for="(item,index) in educationInfo.Combined" :key="index">
 										<view class="flex row swiper_item align-center space-betwesen m-t-10">
 											<view class="flex row align-center">
 												<view class="ic_mark_small"></view>
@@ -253,8 +276,8 @@
 								</scroll-view>
 							</swiper-item>
 							<swiper-item>
-								<scroll-view scroll-y="true" v-if="detailInfo.school.Special != undefined" :style="detailInfo.school.Special.length > 5 ? 'height:450upx' : 'height:' + detailInfo.school.Special.length * 100 + 'upx'">
-									<block v-for="(item,index) in detailInfo.school.Special" :key="index">
+								<scroll-view scroll-y="true" v-if="educationInfo.Special != undefined" :style="educationInfo.Special.length > 5 ? 'height:450upx' : 'height:' + educationInfo.Special.length * 100 + 'upx'">
+									<block v-for="(item,index) in educationInfo.Special" :key="index">
 										<view class="flex row swiper_item align-center space-betwesen m-t-10">
 											<view class="flex row align-center">
 												<view class="ic_mark_small"></view>
@@ -378,6 +401,8 @@
 				showSkeleton: true,
 				hash: '',
 				mode: 'default',
+				price_min:0,
+				price_max:0,
 				schoolPos: 0,
 				unitPos: 0,
 				latitude: 39.909,
@@ -386,7 +411,7 @@
 				current: 0,
 				suburb: '',
 				isPlayVideo: true,
-				detailInfo: {},
+				v2DetailInfo: {},
 				phone: "18712608080",
 				name: "",
 				price: '',
@@ -398,7 +423,10 @@
 					bottom: 20
 				},
 				isSaved: false,
-				unitNum: ''
+				unitNum: '',
+				nearbyInfo:{},
+				educationInfo:{},
+				type:''
 			}
 		},
 		onReady() {
@@ -413,21 +441,23 @@
 		onLoad(option) {
 			this.hash = option.hash
 			if (option.name) {
-				this.detailInfo.name = option.name
+				this.v2DetailInfo.project_name_en = option.name
+				console.log("name:" + this.v2DetailInfo.project_name_en)
 			}
 
 			if (option.price) {
 				this.price = option.price
+				console.log("price:" + this.price)
 			}
 
 			this.isLogined = uni.getStorageSync("isLogin")
 			// this.userType = uni.getStorageSync("userInfo").user.type
 			// //this.hash = "HCPP-DGUygntgGK"
-			this.getDetail()
+			this.getV2Detail()    //call for amenities
+			
 			if (this.isLogined) {
 				this.getSaveList()
 			}
-
 			this.getTranslate('zh')
 		},
 		methods: {
@@ -472,6 +502,7 @@
 					url: "../login/login"
 				})
 			},
+			
 			saveProperty() {
 				if (uni.getStorageSync("userInfo") == undefined || uni.getStorageSync("userInfo") == "" || uni.getStorageSync(
 						"userInfo") == null) {
@@ -529,107 +560,148 @@
 									}
 								}
 							}
-						} else {
-							uni.showToast({
-								icon: 'none',
-								title: res.data.message
-							});
 						}
-
-
 					}
 				});
 			},
-			getDetail() {
+			getV2Detail() {
 				var that = this
-				// showLoading(this.$t("Loading"))
+				showLoading(this.$t("Loading"))
+				console.log("call v2 detail info:" + this.hash)
 				uni.request({
-					url: apiUrl.getPropertyDetail, //仅为示例，并非真实接口地址。
+					url: apiUrl.v2_getPropertyDetail, //仅为示例，并非真实接口地址。
 					data: {
 						token: uni.getStorageSync("token"),
-						hash: this.hash
+						hash: this.hash,
+						scene:"app"
 					},
 					success: (res) => {
 						// hideLoading()
+						console.log("v2 detail info:" + res.data.data)
 						if (res.data.code == 0) {
 							if (res.data.data != null) {
-								this.detailInfo = res.data.data
-								this.tags = this.detailInfo.tags
-								console.log("images:" + this.detailInfo.images[0])
+								this.v2DetailInfo = res.data.data
+								this.tags = this.v2DetailInfo.descriptions.tags_en
+								
 								if (uni.getStorageSync("language") == "en") {
-									this.unitNum = "Total " + this.detailInfo.unit_num + " units"
-									this.suburb = this.detailInfo.suburb_en
-									if (this.detailInfo.unit_featured.length > 0) {
-										for (var i = 0; i < this.detailInfo.unit_featured.length; i++) {
-											console.log("land size:" + this.detailInfo.unit_featured[i].size_land)
-											console.log("house size:" + this.detailInfo.unit_featured[i].size_house_design)
-											this.detailInfo.unit_featured[i].price_total = this.detailInfo.symbol + common.currency(this.detailInfo.unit_featured[
-												i].price_total)
-										}
-									}
-
+									this.unitNum = "Total " + this.v2DetailInfo.unit.total_number + " units"
+									this.suburb = this.v2DetailInfo.location.suburb_en
+									this.type = this.v2DetailInfo.project_type_en
+								
 								} else {
-									this.unitNum = "共计 " + this.detailInfo.unit_num + " 户型"
-									this.suburb = this.detailInfo.suburb
-									if (this.detailInfo.unit_featured.length > 0) {
-										for (var i = 0; i < this.detailInfo.unit_featured.length; i++) {
-											// this.detailInfo.unit_featured[i].price_total = (this.detailInfo.unit_featured[i].price_total / 10000).toFixed(2).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,") + this.$t("Million") 
-											this.detailInfo.unit_featured[i].price_total = this.detailInfo.symbol + common.currency(this.detailInfo.unit_featured[
-												i].price_total)
-										}
+									this.unitNum = "共计 " + this.v2DetailInfo.unit.total_number + " 户型"
+									this.suburb = this.v2DetailInfo.location.suburb_cn
+									this.type = this.v2DetailInfo.project_type_cn
+								}	
+															
+								if (this.v2DetailInfo.unit.featured.length > 0) {
+									for (var i = 0; i < this.v2DetailInfo.unit.featured.length; i++) {
+										this.v2DetailInfo.unit.featured[i].price_total = this.v2DetailInfo.unit.featured[i].price.symbol + common.currency(this.v2DetailInfo.unit.featured[i].price.price)
 									}
 								}
-
-								this.price = this.detailInfo.symbol + common.currency(this.detailInfo.price_min_k + "000")
+								
+								this.price_min = this.v2DetailInfo.price.symbol + common.currency(this.v2DetailInfo.factsheet.price_min)
+								this.price_max = this.v2DetailInfo.factsheet.price_max == null ? '' :  this.v2DetailInfo.price.symbol  + common.currency(this.v2DetailInfo.factsheet.price_max)
+								
+								console.log("amenities hash:" + this.v2DetailInfo.location[2].amenities)
+								if(this.v2DetailInfo.relate_hashes.education != undefined && this.v2DetailInfo.relate_hashes.education != null && this.v2DetailInfo.relate_hashes.education != "") {
+									this.getEducationInfo()
+								}
+								else {
+									this.showSkeleton = false;
+									hideLoading()
+								}
 							}
 						} else {
+							this.showSkeleton = false
+							hideLoading();
 							uni.showToast({
 								icon: 'none',
 								title: res.data.message
 							});
-
+				
 							if (res.data.message === "第三方授权登录失败或已过期") {
 								common.getThirdToken()
 							}
 						}
-
-						setTimeout(() => {
-							that.showSkeleton = false
-						}, 200)
 					}
 				});
 			},
+			getEducationInfo() {
+				var that = this
+				console.log("education info:" + this.hash)
+				uni.request({
+					url: apiUrl.getEducationInfo, //仅为示例，并非真实接口地址。
+					data: {
+						token: uni.getStorageSync("token"),
+						hash: this.v2DetailInfo.relate_hashes.education,
+						scene:"app"
+					},
+					success: (res) => {
+						hideLoading()
+						this.showSkeleton = false
+						console.log("education info:" + res.data.data)
+						if (res.data.code == 0) {
+							this.educationInfo = res.data.data.education
+						} else {
+							uni.showToast({
+								icon: 'none',
+								title: res.data.message
+							});
+				
+							if (res.data.message === "第三方授权登录失败或已过期") {
+								common.getThirdToken()
+							}
+						}
+					}
+				});
+			},
+			
 			gotoAnalysis() {
-				if (uni.getStorageSync("userInfo").webportal.confirmed_status == 1 || uni.getStorageSync("userInfo").webportal.portal_type ==
-					"standard") {
-					uni.navigateTo({
-						url: "/pages/error/403"
-					})
-				} else {
-					uni.navigateTo({
-						url: "/pages/house/analysis?hash=" + this.hash + "&name=" + this.detailInfo.name
-					})
+				if (!uni.getStorageSync("isLogin")) {
+					this.gotoLogin()
 				}
+				else {
+					if (uni.getStorageSync("userInfo").user_status[1].is_portal_user.is_double_activated != 2) {
+						uni.navigateTo({
+							url: "/pages/error/403"
+						})
+					} else {
+						var imageUrl = ""
+						if (this.v2DetailInfo.image.contents.length > 0) {
+							imageUrl = this.v2DetailInfo.image.properties.cos_prefix + this.v2DetailInfo.image.contents[0].relative_url + this.v2DetailInfo.image.properties.ci_surfix + this.v2DetailInfo.image.properties.ci_thumb +  this.v2DetailInfo.image.properties.ci_quality;
+							for (var i = 0; i < this.v2DetailInfo.image.contents.length; i++) {
+								if (this.v2DetailInfo.image.contents[i].is_primary == 1) {
+									imageUrl = this.v2DetailInfo.image.properties.cos_prefix + this.v2DetailInfo.image.contents[i].relative_url + this.v2DetailInfo.image.properties.ci_surfix + this.v2DetailInfo.image.properties.ci_medium +  this.v2DetailInfo.image.properties.ci_quality;
+									break;
+								}
+							}
+						}
+						
+						uni.navigateTo({
+							url: "/pages/house/analysis?hash=" + this.hash + "&name=" + this.v2DetailInfo.project_name_en + "&primaryImage=" + imageUrl
+						})
+					}
+					}
 			},
 			gotoMap() {
 				uni.navigateTo({
-					url: "/pages/map/map?hash=" + this.hash + "&lat=" + this.detailInfo.address.lat + "&lng=" + this.detailInfo.address
-						.lng + "&nearby=" + this.detailInfo.nearby
+					url: "/pages/map/map?hash=" + this.v2DetailInfo.location[2].amenities + "&lat=" + this.v2DetailInfo.location[1].lat + "&lng=" + this.v2DetailInfo.location[1].lon
 				})
 			},
 			gotoAgent() {
-				if (uni.getStorageSync("userInfo").webportal.confirmed_status == 1 || uni.getStorageSync("userInfo").webportal.portal_type ==
-					"standard") {
+				
+				if (uni.getStorageSync("userInfo").user_status[1].is_portal_user.is_double_activated != 2 ) {
 					uni.navigateTo({
 						url: "/pages/error/403"
 					})
 				} else {
 					var imageUrl = ""
-					if (this.detailInfo.images.length > 0) {
-						imageUrl = this.detailInfo.images[0].url;
-						for (var i = 0; i < this.detailInfo.images.length; i++) {
-							if (this.detailInfo.images[i].is_primary == 1) {
-								imageUrl = this.detailInfo.images[i].url;
+					if (this.v2DetailInfo.image.contents.length > 0) {
+						imageUrl = this.v2DetailInfo.image.properties.cos_prefix + this.v2DetailInfo.image.contents[0].relative_url + this.v2DetailInfo.image.properties.ci_surfix + this.v2DetailInfo.image.properties.ci_thumb +  this.v2DetailInfo.image.properties.ci_quality;
+						for (var i = 0; i < this.v2DetailInfo.image.contents.length; i++) {
+							if (this.v2DetailInfo.image.contents[i].is_primary == 1) {
+								imageUrl = this.v2DetailInfo.image.properties.cos_prefix + this.v2DetailInfo.image.contents[i].relative_url + this.v2DetailInfo.image.properties.ci_surfix + this.v2DetailInfo.image.properties.ci_medium +  this.v2DetailInfo.image.properties.ci_quality;
 								break;
 							}
 						}
@@ -641,34 +713,42 @@
 				}
 			},
 			gotoUnit() {
-				if (uni.getStorageSync("userInfo").webportal.confirmed_status == 1 || uni.getStorageSync("userInfo").webportal.portal_type ==
-					"standard") {
-					uni.navigateTo({
-						url: "/pages/error/403"
-					})
-				} else {
-					uni.navigateTo({
-						url: "/pages/unit/index?hash=" + this.hash + "&name=" + this.detailInfo.name
-					})
+				if (!uni.getStorageSync("isLogin")) {
+					this.gotoLogin()
 				}
+				else {
+					if ( uni.getStorageSync("userInfo").user_status[1].is_portal_user.is_double_activated != 2 ) {
+						uni.navigateTo({
+							url: "/pages/error/403"
+						})
+					} else {
+						uni.navigateTo({
+							url: "/pages/unit/index?hash=" + this.hash + "&name=" + this.v2DetailInfo.project_name_en
+						})
+					}
+				}
+				
 			},
 			gotoUnitDetail(index) {
-				if (uni.getStorageSync("userInfo").webportal.confirmed_status == 1 || uni.getStorageSync("userInfo").webportal.portal_type ==
-					"standard") {
-					uni.navigateTo({
-						url: "/pages/error/403"
-					})
-				} else {
-					uni.navigateTo({
-						url: "/pages/unit/detail?hash=" + this.detailInfo.unit_featured[index].hash
-					})
+				if (!uni.getStorageSync("isLogin")) {
+					this.gotoLogin()
 				}
-
+				else {
+					if (uni.getStorageSync("userInfo").user_status[1].is_portal_user.is_double_activated != 2 ) {
+						uni.navigateTo({
+							url: "/pages/error/403"
+						})
+					} else {
+						uni.navigateTo({
+							url: "/pages/unit/detail?hash=" + this.v2DetailInfo.unit.featured[index].hash
+						})
+					}
+				}
 			},
 			dial() {
 				var userInfo = uni.getStorageSync('userInfo')
 				uni.makePhoneCall({
-					phoneNumber: userInfo.user.mobile,
+					phoneNumber: userInfo.user_info.mobile,
 					success: (res) => {
 						console.log('调用成功!')
 					},
@@ -682,12 +762,12 @@
 			},
 			playVideo() {
 				this.isPlayVideo = !this.isPlayVideo
-				this.videoUrl = this.detailInfo.video
+				this.videoUrl = this.v2DetailInfo.video.contents[0]
 			},
 			previewPropertyImage() {
 				let imgsArray = []
-				for (var i = 0; i < this.detailInfo.images.length; i++) {
-					imgsArray.push(this.detailInfo.images[i].url)
+				for (var i = 0; i < this.v2DetailInfo.image.contents.length; i++) {
+					imgsArray.push(this.v2DetailInfo.image.properties.cos_prefix + this.v2DetailInfo.image.contents[i].relative_url + this.v2DetailInfo.image.properties.ci_surfix + this.v2DetailInfo.image.properties.ci_large )
 				}
 
 				uni.previewImage({
@@ -700,7 +780,7 @@
 					this.gotoLogin()
 				} else {
 					// 分享图文到微信聊天界面
-					var baseStr = "hash=" + this.detailInfo.hash + "&user_hash=" + uni.getStorageSync("userInfo").user.hash
+					var baseStr = "hash=" + this.v2DetailInfo.hash + "&user_hash=" + uni.getStorageSync("userInfo").hash
 					var base64 = btoa(baseStr)
 					var base66 = "c" + base64.substring(0, 5) + "t" + base64.substring(5)
 
@@ -708,23 +788,21 @@
 					var desc = ""
 
 					//不是公司成员
-					if (uni.getStorageSync("userInfo").user.company_portal_hash == null || uni.getStorageSync("userInfo").user.company_portal_hash ==
-						'') {
-						desc = this.detailInfo.secondary_description
+					if (uni.getStorageSync("userInfo").user_status[1].is_portal_user.status == null || uni.getStorageSync("userInfo").user_status[1].is_portal_user.status == 0) {
+						desc = this.v2DetailInfo.descriptions.secondary_des_en
 						if (uni.getStorageSync("language") == 'en') {
-							title = this.detailInfo.proptype_en + ": " + this.detailInfo.name
+							title = this.v2DetailInfo.project_type_en + ": " + this.v2DetailInfo.project_name_en
 						} else {
-							title = this.detailInfo.proptype + ": " + this.detailInfo.name
+							title = this.v2DetailInfo.project_type_cn + ": " + (this.v2DetailInfo.project_name_cn != "" ? this.v2DetailInfo.project_name_cn : this.v2DetailInfo.project_name_en)
 						}
 					} else { //公司成员
 						if (uni.getStorageSync("language") == 'en') {
-							title = this.detailInfo.proptype_en + ": " + this.detailInfo.name
-							desc = "Project shared by Asialand - " + uni.getStorageSync("userInfo").user.name + " " + uni.getStorageSync(
-								"userInfo").user.surname
+							title = this.v2DetailInfo.project_type_en + ": " + this.v2DetailInfo.project_name_en
+							desc = "Project shared by Asialand - " + uni.getStorageSync("userInfo").user_info.first_name + " " + uni.getStorageSync(
+								"userInfo").user_info.last_name
 						} else {
-							title = this.detailInfo.proptype + ": " + this.detailInfo.name
-							desc = "由 Asialand - " + uni.getStorageSync("userInfo").user.surname + " " + uni.getStorageSync("userInfo").user
-								.name + "为您分享"
+							title = this.v2DetailInfo.project_type_cn + ": " + (this.v2DetailInfo.project_name_cn != "" ? this.v2DetailInfo.project_name_cn : this.v2DetailInfo.project_name_en)
+							desc = "由 Asialand - " + uni.getStorageSync("userInfo").user_info.first_name + " " + uni.getStorageSync("userInfo").user_info.last_name + "为您分享"
 
 						}
 					}
@@ -739,7 +817,7 @@
 							"property/" + base66, // 分享h5地址
 						title: title,
 						summary: desc, // 描述
-						imageUrl: this.detailInfo.images[0].thumb_url,
+						imageUrl: this.v2DetailInfo.image.properties.cos_prefix + this.v2DetailInfo.image.contents[0].relative_url + this.v2DetailInfo.image.properties.ci_surfix + this.v2DetailInfo.image.properties.ci_thumb +  this.v2DetailInfo.image.properties.ci_quality,
 						success: function(res) {
 							hideLoading()
 							console.log("success:" + JSON.stringify(res));
@@ -763,7 +841,7 @@
 			},
 			copyDes() {
 				uni.setClipboardData({
-					data: this.isEnglish ? (this.detailInfo.description == undefined ? '' : this.detailInfo.description) : this.desCn, //要被复制的内容
+					data: this.isEnglish ? (this.v2DetailInfo.descriptions.full_des_en == undefined ? '' : this.v2DetailInfo.descriptions.full_des_en) : this.desCn, //要被复制的内容
 					success: () => { //复制成功的回调函数
 						uni.showToast({ //提示
 							icon: 'none',
@@ -1107,5 +1185,14 @@
 		background-color: rgba(217, 192, 119, 100);
 		text-align: center;
 		border: 1px solid rgba(217, 192, 119, 100);
+	}
+	
+	
+	.item{
+		line-height:80upx;
+		padding-left:30upx;
+	}
+	.back-gray{
+		background-color: #f8f8f8;
 	}
 </style>

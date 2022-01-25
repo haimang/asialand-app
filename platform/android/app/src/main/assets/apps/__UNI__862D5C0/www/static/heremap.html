@@ -151,7 +151,7 @@
 		<div class="header flex row space-between align-center">
 		    <div id="school_tab" class="uni-tab-item flex column">
 		        <div id="school" class="uni-tab-item-title"></div>
-				<div id="school_mark" class="mark" style="visibility: hidden;"></div>
+				<div id="school_mark" class="mark" style="visibility: hiddRen;"></div>
 		    </div>
 			<div id="shopping_tab" class="uni-tab-item flex column">
 			    <div id="shopping" class="uni-tab-item-title"></div>
@@ -241,14 +241,17 @@
 		
 		heremap = map;		 
 		addHomeMarker()
-		//getDetailInfo( getQuery("token"),getQuery("hash")) 
-		 
-		nearByInfo = JSON.parse(getQuery("nearby"))
-		if(nearByInfo != undefined) {
-			nearByInfo = JSON.parse(nearByInfo)
-			console.log("nearByInfo : " + nearByInfo)
-			changeTab(0)	
-		}
+		getDetailInfo( getQuery("token"),getQuery("hash")) 
+		
+		// if(getQuery("nearby") != "") {
+		// 	nearByInfo = JSON.parse(getQuery("nearby"))
+		// }
+		
+		// if(nearByInfo != undefined && nearByInfo != null) {
+		// 	nearByInfo = JSON.parse(nearByInfo)
+		// 	console.log("nearByInfo : " + nearByInfo)
+		// 	changeTab(0)	
+		// }
 		
 		$("#school_mark").css('visibility','visible');
 		$("#loadingView").fadeOut()
@@ -263,13 +266,13 @@
 	function addMarkerToMap() {
 		$("#loadingView").fadeOut()
 		for (var i=0;i< markArray.length;i++){
-			var lat = parseFloat(markArray[i].location.split(",")[0])
-			var lng = parseFloat(markArray[i].location.split(",")[1])	
+			var lat = markArray[i].lat 
+			var lng = markArray[i].lon
 
 			var iconUrl = markArray[i].icon;
 			var subIcon = new H.map.Icon(iconUrl,{size:{w: subIconSize, h: subIconSize}});
 			var marker = new H.map.Marker({lat:lat,lng:lng},{icon:subIcon});
-			marker.setData( '<div style="word-break: break-all;">' + markArray[i].name + '</div>');
+			marker.setData( '<div style="word-break: break-all;">' + markArray[i].name_en + '</div>');
 			marker.addEventListener('tap',function (evt) {
 				console.log("marker tap")
 				ui.removeBubble(bubble)
@@ -303,21 +306,21 @@
 		if(index == 0){ //school 
 			if(nearByInfo!= undefined && nearByInfo.primarySchool != undefined) {
 				for(var i = 0; i < nearByInfo.primarySchool.length; i++) {
-					nearByInfo.primarySchool[i].icon = "img/icon_school.png"
+					// nearByInfo.primarySchool[i].icon = "img/icon_school.png"
 					markArray.push(nearByInfo.primarySchool[i])
 				}
 			}
 			
 			if(nearByInfo!= undefined && nearByInfo.highSchool != undefined) {
 				for(var i = 0; i < nearByInfo.highSchool.length; i++) {
-					nearByInfo.highSchool[i].icon = "img/icon_school.png"
+					// nearByInfo.highSchool[i].icon = "img/icon_school.png"
 					markArray.push(nearByInfo.highSchool[i])
 				}
 			}
 			
 			if(nearByInfo!= undefined && nearByInfo.university != undefined) {
 				for(var i = 0; i < nearByInfo.university.length; i++) {
-					nearByInfo.university[i].icon = "img/icon_school.png"
+					// nearByInfo.university[i].icon = "img/icon_school.png"
 					markArray.push(nearByInfo.university[i])
 				}		
 			}
@@ -325,7 +328,7 @@
 		else if(index == 1) { //shopping
 			if(nearByInfo!= undefined && nearByInfo.shopping != undefined) {
 				for(var i = 0; i < nearByInfo.shopping.length; i++) {
-					nearByInfo.shopping[i].icon = "img/icon_shopping.png"
+					// nearByInfo.shopping[i].icon = "img/icon_shopping.png"
 					markArray.push(nearByInfo.shopping[i])
 				}
 			}
@@ -333,7 +336,7 @@
 		else if(index == 2) { //restaurant
 			if(nearByInfo!= undefined && nearByInfo.restaurant != undefined) {
 				for(var i = 0; i < nearByInfo.restaurant.length; i++) {
-					nearByInfo.restaurant[i].icon = "img/icon_restaurant.png"
+					// nearByInfo.restaurant[i].icon = "img/icon_restaurant.png"
 					markArray.push(nearByInfo.restaurant[i])
 				}
 			}
@@ -341,7 +344,7 @@
 		else if(index == 3) { //transport
 			if(nearByInfo!= undefined && nearByInfo.transport != undefined) {
 				for(var i = 0; i < nearByInfo.transport.length; i++) {
-					nearByInfo.transport[i].icon = "img/icon_transport.png"
+					// nearByInfo.transport[i].icon = "img/icon_transport.png"
 					markArray.push(nearByInfo.transport[i])
 				}
 			}
@@ -349,7 +352,7 @@
 		else if(index == 4) { //leisure
 			if(nearByInfo!= undefined && nearByInfo.leisure != undefined) {
 				for(var i = 0; i < nearByInfo.leisure.length; i++) {
-					nearByInfo.leisure[i].icon = "img/icon_leisure.png"
+					// nearByInfo.leisure[i].icon = "img/icon_leisure.png"
 					markArray.push(nearByInfo.leisure[i])
 				}
 			}
@@ -357,7 +360,7 @@
 		else if(index == 5) { //hospital
 			if(nearByInfo!= undefined && nearByInfo.hospital != undefined) {
 				for(var i = 0; i < nearByInfo.hospital.length; i++) {
-					nearByInfo.hospital[i].icon = "img/icon_hospital.png"
+					// nearByInfo.hospital[i].icon = "img/icon_hospital.png"
 					markArray.push(nearByInfo.hospital[i])
 				}
 			}
@@ -465,7 +468,7 @@
 	function getDetailInfo(token, hash){
 		$.ajax({
 			type: "get",
-			url: "https://console.unifyestate.com/_api/properties/detail",
+			url: "https://console.unifyestate.com/_api/v2/location/info",
 			data: {
 			    token: token,
 				hash: hash
@@ -476,8 +479,8 @@
 				$("#loadingView").fadeOut()
 				if(data.code == 0){
 					if(data.data.nearby != "") {
-						nearByInfo = JSON.parse(data.data.nearby)
-						console.log(nearByInfo)
+						nearByInfo = data.data.amenities
+						console.log("nearbyinfo:" + nearByInfo)
 						$("#school_mark").css('visibility','visible');
 						changeTab(0)
 					}
@@ -498,8 +501,8 @@
 	  // First we need to create an array of DataPoint objects,
 	  // for the ClusterProvider
 	  var dataPoints = markArray.map(function (item) {
-		  var lat = parseFloat(item.location.split(",")[0])
-		  var lng = parseFloat(item.location.split(",")[1])
+		  var lat = item.lat
+		  var lng = item.lon
 		return new H.clustering.DataPoint(lat, lng);
 	  });
 	

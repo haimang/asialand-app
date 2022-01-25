@@ -293,23 +293,24 @@
 		houseList = JSON.parse(getQuery("houseList"))
 		//alert(JSON.parse(houseList)[0].address.lat)
 		addMarkerToMap()
-		// getProperties(getQuery("token"))	
+		//getProperties(getQuery("token"))	
 	}
 
 	function addMarkerToMap() {
 
 		if (houseList != null && houseList.length > 0) {
+			console.log(houseList[0].address.lat + " , " + houseList[0].address.lon)
 			heremap.setCenter({
 				lat: Number(houseList[0].address.lat),
-				lng: Number(houseList[0].address.lng)
+				lng: Number(houseList[0].address.lon)
 			});
 			for (var i = 0; i < houseList.length; i++) {
 				var price = 0
 				if (getQuery('language') != "en") {
-					price = houseList[i].price_min * 10000
+					price = houseList[i].price_min 
 					startingStr = "价格"
 				} else {
-					price = houseList[i].symbol + houseList[i].price_min * 10000
+					price = houseList[i].symbol + houseList[i].price_min 
 					// if(houseList[i].price_min_k < 1000) {
 					// 	price = houseList[i].symbol + houseList[i].price_min_k + "K" 
 					// }
@@ -328,12 +329,12 @@
 				});
 				var marker = new H.map.Marker({
 					lat: Number(houseList[i].address.lat),
-					lng: houseList[i].address.lng
+					lng: houseList[i].address.lon
 				}, {
 					icon: subIcon
 				});
 				marker.setData('<div class="desc_view" data-action="' + houseList[i].hash +
-					'">	<div class="flex row" ><img class="home_img m-l-10" src="' + houseList[i].images[0].thumb_url + '/format/webp/quality/50' + '">' +
+					'">	<div class="flex row" ><img class="home_img m-l-10" src="' + houseList[i].image + '">' +
 					'</img><div class="flex column m-l-10" style="text-align: left;">' +
 					'<div class="font-size-normal font-bold address">' + houseList[i].address.address + '</div>' +
 					'<div class="font-size-normal font-normal">' + startingStr + ': ' + price + '</div>' +
