@@ -132,7 +132,7 @@
 				if (!uni.getStorageSync("isLogin")) {
 					this.gotoLogin()
 				} else {
-					if (uni.getStorageSync("userInfo").webportal.portal_type == "standard" || uni.getStorageSync("userInfo").webportal.confirmed_status == "1") {
+					if (uni.getStorageSync("userInfo").user_status[1].is_portal_user.is_double_activated != 2) {
 						uni.navigateTo({
 							url: "../error/403"
 						})

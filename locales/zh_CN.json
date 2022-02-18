@@ -89,7 +89,7 @@
 	"Total Volume": "总体量",
 	"Price Range": "价格范围",
 	"Commission": "佣金",
-	"Comment": "佣金备注",
+	"Comment": "备注",
 	"Files and Documents": "销售资料下载",
 	"click download button to view, or copy down load link": "可点击按钮下载，或者复制下载链接。",
 	"Download": "下载",
@@ -315,7 +315,7 @@
 	"Project information":"项目详情信息清单",
 	"Link Copied!":"链接已复制!",
 	"LOGIN_NOT_ATTEND_PORTAL":"您的账号尚未被指定用户组， 请联系您的渠道经理来解决这个问题。",
-	"LOGIN_NOT_DOUBLE_ACTIVATED":"您的账号正在等待管理员的审核。请给我们一些时间进行资料效验。感谢您的耐心"
-	
+	"LOGIN_NOT_DOUBLE_ACTIVATED":"您的账号正在等待管理员的审核。请给我们一些时间进行资料效验。感谢您的耐心",
+	"Expected Construction":"预期开工日期"
 
 }	

@@ -109,9 +109,11 @@
 							<text class="font-size-normal item">{{$t('Project Type')}}: <text class="uni-bold m-l-10">{{type}}</text></text>
 							<text class="font-size-normal item back-gray">{{$t('Location')}}: <text class="uni-bold  m-l-10">{{ v2DetailInfo.location != undefined ? v2DetailInfo.location[1].address : ""}}</text></text>
 			<!--			<text class="font-size-normal item">{{$t('Developer')}}: <text class="uni-bold m-l-10">{{detailInfo.developer}}</text></text>-->
-							<text class="font-size-normal item ">{{$t('Completion')}}: <text class="uni-bold m-l-10">{{v2DetailInfo.factsheet != undefined ? v2DetailInfo.factsheet.date_construct : ""}}</text></text>
-							<text class="font-size-normal item back-gray">{{$t('Total Volume')}}: <text class="uni-bold m-l-10">{{v2DetailInfo.unit != undefined ?  v2DetailInfo.unit.total_number : ""}}</text></text>
-							<text class="font-size-normal item ">{{$t('Price Range')}}: <text class="uni-bold m-l-10">{{price_min + " - "}}{{price_max}}</text></text>
+							<text class="font-size-normal item ">{{$t('Expected Construction')}}: <text class="uni-bold m-l-10">{{v2DetailInfo.factsheet != undefined ? v2DetailInfo.factsheet.date_construct : ""}}</text></text>
+							
+							<text class="font-size-normal item back-gray">{{$t('Completion')}}: <text class="uni-bold m-l-10">{{v2DetailInfo.factsheet != undefined ? v2DetailInfo.factsheet.date_completion : ""}}</text></text>
+							<text class="font-size-normal item ">{{$t('Total Volume')}}: <text class="uni-bold m-l-10">{{v2DetailInfo.unit != undefined ?  v2DetailInfo.unit.total_number : ""}}</text></text>
+							<text class="font-size-normal item back-gray">{{$t('Price Range')}}: <text class="uni-bold m-l-10">{{price_min + " - "}}{{price_max}}</text></text>
 						</view>
 					</block>
 					<view class="top_label flex row m-t-50">

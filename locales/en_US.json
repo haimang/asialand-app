@@ -310,5 +310,6 @@
 	"Project information":"Project Details",
 	"Link Copied!":"Link Copied!",
 	"LOGIN_NOT_ATTEND_PORTAL":"You have not been assigned to any of our user group, please contact your channel manager to resolve this issue.",
-	"LOGIN_NOT_DOUBLE_ACTIVATED":"Asialand admin is processing your registration, please allow sometime for your account to get activated. Thank you for your patience."
+	"LOGIN_NOT_DOUBLE_ACTIVATED":"Asialand admin is processing your registration, please allow sometime for your account to get activated. Thank you for your patience.",
+	"Expected Construction":"Expected Construction"
 }
